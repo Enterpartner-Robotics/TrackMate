@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TrackMate – Jelenlét</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Libek -->
+  <script src="/js/jquery-3.7.1.min.js"></script>
+  <script src="/js/index.global.min.js"></script> <!-- FullCalendar bundle -->
+  <script src="/js/tabulator.min.js"></script>
+  <script src="/node_modules/luxon/build/global/luxon.min.js"></script>
+
+  <script src="/node_modules/flatpickr/dist/flatpickr.js"></script>
+  <script src="/node_modules/flatpickr/dist/l10n/hu.js"></script>
+  <script src="/node_modules/flatpickr/dist/plugins/monthSelect/index.js"></script>
+
+  <link rel="stylesheet" href="/node_modules/flatpickr/dist/plugins/monthSelect/style.css">
+  <link rel="stylesheet" href="/node_modules/flatpickr/dist/themes/material_green.css">
+  <link rel="stylesheet" href="/output.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/tabulator_modern.min.css">
+
+  <!-- Navbar -->
+  <script src="/modul/navbar/server_script/navbar.js"></script>
+
+  <style>
+    .fc .fc-daygrid-event { white-space: normal; font-size: 12px; padding: 2px 4px; }
+    .tm-ok .fc-event-main { border-left: 4px solid #16a34a; }
+    .tm-late .fc-event-main { border-left: 4px solid #f59e0b; }
+    .tm-absent .fc-event-main { border-left: 4px solid #ef4444; }
+    .tm-nonwork .fc-event-main { border-left: 4px solid #6b7280; opacity: .7; }
+    .tm-empty .fc-event-main { border-left: 4px solid #9ca3af; opacity: .7; }
+  </style>
+</head>
+
+<body class="bg-vaj-szin min-h-screen justify-center items-center">
+  <!-- Navbar -->
+  <header class="bg-alapzold fixed top-0 left-0 w-full shadow-md z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-16 justify-between">
+      <div id="profil-mobil" class="md:hidden flex items-center profilgomblink">
+        <a href="" data-menu-id="102">
+          <img src="" id="profilgomb-mobil" alt="Profil adatok" title="Profil adatok" class="rounded-full w-10 h-10">
+        </a>
+      </div>
+
+      <div id="logo" class="flex items-center justify-center md:justify-start">
+        <img src="/assets/logo/trackmate_zold_szeles.png" alt="Trackmate logó" title="Trackmate logó" class="h-8 rounded-lg">
+      </div>
+
+      <nav id="asztal" class="hidden md:flex space-x-4 items-center"></nav>
+
+      <div class="flex items-center">
+        <div id="profil" class="hidden md:flex items-center relative profilgomblink rounded">
+          <a data-menu-id="102" class="text-black px-4 py-2 rounded text-sm md:text-base flex items-center">
+            <img src="" id="profilgomb" alt="Profil adatok" title="Profil adatok" class="rounded-full w-10 h-10">
+          </a>
+        </div>
+
+        <div class="md:hidden flex items-center">
+          <button id="mobil-menu-gomb" class="text-gray-500 hover:text-zold-500 focus:outline-none focus:text-zold-500">
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="mobil-menu" class="bg-kek-300 border-t border-gray-200 hidden">
+      <nav id="mobil" class="list-style-class px-4 py-2"></nav>
+    </div>
+  </header>
+
+  <div class="pt-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row md:items-end gap-4 mb-4">
+      <div class="w-full md:w-96">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Munkatárs</label>
+        <select id="riport_felh_select" class="w-full border border-gray-300 rounded-md p-2 bg-white">
+          <option value="">Betöltés…</option>
+        </select>
+      </div>
+
+      <div class="w-full md:w-64">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Hónap</label>
+        <input id="riport_honap" class="w-full border border-gray-300 rounded-md p-2 bg-white" />
+      </div>
+
+      <button id="riport_frissit" class="bg-alapzold text-white px-4 py-2 rounded-md hover:bg-zold-500">
+        Frissítés
+      </button>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-4">
+      <div id="riport_calendar"></div>
+    </div>
+  </div>
+
+  <!-- Nap részletek modal -->
+  <div id="riport_nap_modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-[200]">
+    <div class="bg-white rounded-lg shadow-lg w-[95%] md:w-[70%] max-w-5xl mx-auto mt-24 p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 id="riport_nap_cim" class="text-xl font-bold text-alapzold"></h2>
+        <button id="riport_nap_bezar" class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600">Bezárás</button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+        <div class="p-3 border rounded">
+          <div class="text-sm text-gray-500">Első kezdés</div>
+          <div id="riport_elso_kezdes" class="font-semibold"></div>
+        </div>
+        <div class="p-3 border rounded">
+          <div class="text-sm text-gray-500">Össz. óra</div>
+          <div id="riport_ossz_ora" class="font-semibold"></div>
+        </div>
+        <div class="p-3 border rounded">
+          <div class="text-sm text-gray-500">Státusz</div>
+          <div id="riport_statusz" class="font-semibold"></div>
+        </div>
+        <div class="p-3 border rounded">
+          <div class="text-sm text-gray-500">Nyitott</div>
+          <div id="riport_nyitott_db" class="font-semibold"></div>
+        </div>
+        <div class="p-3 border rounded">
+          <div class="text-sm text-gray-500">Hibás zárás</div>
+          <div id="riport_hibas_db" class="font-semibold"></div>
+        </div>
+      </div>
+
+      <div id="riport_tabulator" class="border rounded"></div>
+    </div>
+  </div>
+
+  <!-- Hidden fields (ha kell jog/azonosító) -->
+  <input type="hidden" id="felh_jog" value="1">
+  <input type="hidden" id="felh_id" value="7">
+
+  <script>
+    let calendar = null;
+    let tab = null;
+
+    const API = {
+      users: "/riport/felh_lista.php",
+      month: "/riport/jelenlet.php",
+      day:   "/riport/jelenlet_nap.php"
+    };
+
+    let fp = null;
+    let internalMonthSync = false;
+    let refreshInFlight = false;
+    let pendingRefresh = false;
+
+    function toISODate(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    }
+
+    function formatTime(dtStr) {
+      if (!dtStr) return "-";
+      return String(dtStr).slice(11, 16); // HH:MM
+    }
+
+    function monthRange(dateObj) {
+      const from = new Date(dateObj.getFullYear(), dateObj.getMonth(), 1);
+      const to = new Date(dateObj.getFullYear(), dateObj.getMonth() + 1, 1);
+      return { from: toISODate(from), to: toISODate(to) };
+    }
+
+    function getIntAny(obj, keys, def = 0) {
+      for (const k of keys) {
+        if (obj && obj[k] != null && obj[k] !== "") {
+          const n = parseInt(obj[k], 10);
+          if (!Number.isNaN(n)) return n;
+        }
+      }
+      return def;
+    }
+
+    async function apiGetUsers() {
+      const res = await fetch(API.users, { cache: "no-store" });
+      if (!res.ok) throw new Error("Nem sikerült a felhasználó lista betöltése.");
+      return await res.json();
+    }
+
+    async function apiGetMonth(felh_id, from, to) {
+      const url = `${API.month}?felh_id=${encodeURIComponent(felh_id)}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error("Nem sikerült a havi jelenlét betöltése.");
+      return await res.json();
+    }
+
+    async function apiGetDayDetails(felh_id, nap) {
+      const url = `${API.day}?felh_id=${encodeURIComponent(felh_id)}&nap=${encodeURIComponent(nap)}`;
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error("Nem sikerült a napi részletek betöltése.");
+      return await res.json();
+    }
+
+    function makeDayEvent(dayRow) {
+      let cls = "tm-day";
+      let title = "";
+
+      if (dayRow.is_munkanap === 0) {
+        cls += " tm-nonwork";
+        title = "Nem munkanap";
+      } else {
+        if (dayRow.hianyzik === 1) {
+          cls += " tm-absent";
+          title = "Hiányzás";
+        } else if (dayRow.kesett === 1) {
+          cls += " tm-late";
+          title = "Késés";
+        } else if (dayRow.elso_kezdes) {
+          cls += " tm-ok";
+          title = "Rendben";
+        } else {
+          cls += " tm-empty";
+          title = "Nincs adat";
+        }
+      }
+
+      const bad = getIntAny(dayRow, ["hibasZarasDb", "hibas_zaras_db", "hibasZarasCount", "hibas_zaras_count", "hibas_db", "hibasZaras"]);
+      const open = getIntAny(dayRow, ["nyitottDb", "nyitott_db", "nyitottCount", "nyitott_count", "nyitott"]);
+
+      const extra = [];
+      if (dayRow.elso_kezdes) extra.push(`Kezdés: ${formatTime(dayRow.elso_kezdes)}`);
+      if (dayRow.ossz_nyers_ora != null) extra.push(`Óra: ${dayRow.ossz_nyers_ora}`);
+      if (open > 0) extra.push(`Nyitott: ${open}`);
+      if (bad > 0) extra.push(`Hibás zárás: ${bad}`);
+
+      return {
+        title: extra.length ? extra.join(" • ") : title,
+        start: dayRow.nap,
+        allDay: true,
+        classNames: [cls],
+        extendedProps: { dayRow }
+      };
+    }
+
+    async function refreshMonth() {
+      if (refreshInFlight) {
+        pendingRefresh = true;
+        return;
+      }
+      refreshInFlight = true;
+
+      try {
+        const felh_id = $("#riport_felh_select").val();
+        if (!felh_id) return;
+
+        const v = $("#riport_honap").val(); // "YYYY-MM"
+        const parts = (v || "").split("-");
+        const yy = parseInt(parts[0], 10);
+        const mm = parseInt(parts[1], 10);
+        const anyDay = (yy && mm) ? new Date(yy, mm - 1, 1) : new Date();
+
+        const { from, to } = monthRange(anyDay);
+        const rows = await apiGetMonth(felh_id, from, to);
+
+        calendar.removeAllEvents();
+        (rows || []).forEach(r => calendar.addEvent(makeDayEvent(r)));
+      } finally {
+        refreshInFlight = false;
+        if (pendingRefresh) {
+          pendingRefresh = false;
+          refreshMonth();
+        }
+      }
+    }
+
+    function setMonthInputFromDate(d) {
+      // d: Date -> "YYYY-MM"
+      const v = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      internalMonthSync = true;
+      if (fp) fp.setDate(v, false, "Y-m"); // no change event
+      $("#riport_honap").val(v);
+      internalMonthSync = false;
+    }
+
+    async function openDayModal(felh_id, nap) {
+      const data = await apiGetDayDetails(felh_id, nap);
+      const day = data.day || {};
+      const rows = data.rows || [];
+
+      $("#riport_nap_cim").text(`${nap} – ${$("#riport_felh_select option:selected").text()}`);
+      $("#riport_elso_kezdes").text(day.elso_kezdes ? formatTime(day.elso_kezdes) : "-");
+      $("#riport_ossz_ora").text(day.ossz_nyers_ora != null ? day.ossz_nyers_ora : "-");
+
+      const bad = getIntAny(day, ["hibasZarasDb", "hibas_zaras_db", "hibasZarasCount", "hibas_zaras_count", "hibas_db", "hibasZaras"]);
+      const open = getIntAny(day, ["nyitottDb", "nyitott_db", "nyitottCount", "nyitott_count", "nyitott"]);
+      $("#riport_hibas_db").text(String(bad));
+      $("#riport_nyitott_db").text(String(open));
+
+      let st = "—";
+      if (day.is_munkanap === 0) st = "Nem munkanap";
+      else if (day.hianyzik === 1) st = "Hiányzás";
+      else if (day.kesett === 1) st = "Késés";
+      else if (day.elso_kezdes) st = "Rendben";
+      $("#riport_statusz").text(st);
+
+      if (!tab) {
+        tab = new Tabulator("#riport_tabulator", {
+          layout: "fitColumns",
+          height: "360px",
+          placeholder: "Nincs aktivitás ezen a napon.",
+          columns: [
+            { title: "Aktivitás ID", field: "munkalap_aktivitas_id", width: 110 },
+            { title: "Projekt", field: "projekt_nev", minWidth: 160 },
+            { title: "Munkalap", field: "munkalap_megnevezes", minWidth: 260 },
+            { title: "Kezdés", field: "kezdes_ido", width: 90, formatter: (c) => formatTime(c.getValue()) },
+            { title: "Zárás", field: "zaras_ido", width: 90, formatter: (c) => formatTime(c.getValue()) },
+            { title: "Óra", field: "nyers_ora", width: 70 },
+            { title: "Hibás zárás", field: "hibasZaras", width: 110 }
+          ]
+        });
+      }
+      tab.setData(rows);
+
+      $("#riport_nap_modal").removeClass("hidden");
+    }
+
+    $(async function () {
+      // hónapválasztó (auto refresh)
+      fp = $("#riport_honap").flatpickr({
+        locale: "hu",
+        plugins: [
+          new monthSelectPlugin({
+            shorthand: true,
+            dateFormat: "Y-m",
+            altFormat: "Y. F"
+          })
+        ],
+        defaultDate: new Date(),
+        onChange: async function () {
+          if (internalMonthSync) return;
+          try {
+            const v = $("#riport_honap").val();
+            const parts = (v || "").split("-");
+            const yy = parseInt(parts[0], 10);
+            const mm = parseInt(parts[1], 10);
+            if (yy && mm && calendar) {
+              internalMonthSync = true;
+              calendar.gotoDate(new Date(yy, mm - 1, 1));
+              internalMonthSync = false;
+            }
+            await refreshMonth();
+          } catch (e) { console.error(e); }
+        }
+      });
+
+      // calendar init
+      calendar = new FullCalendar.Calendar(document.getElementById("riport_calendar"), {
+        initialView: "dayGridMonth",
+        height: "auto",
+        locale: "hu",
+        firstDay: 1,
+        headerToolbar: {
+          left: "prev,next today",
+          center: "title",
+          right: ""
+        },
+        dateClick: async (info) => {
+          const felh_id = $("#riport_felh_select").val();
+          if (!felh_id) return;
+          await openDayModal(felh_id, info.dateStr);
+        },
+        datesSet: async (info) => {
+          if (internalMonthSync) return;
+          // amikor prev/next/today-ozol, szinkronizáljuk a hónap inputot és frissítünk
+          try {
+            const d = info.start; // a nézet kezdete
+            const current = new Date(info.view.currentStart.getFullYear(), info.view.currentStart.getMonth(), 1);
+            setMonthInputFromDate(current);
+            await refreshMonth();
+          } catch (e) { console.error(e); }
+        }
+      });
+      calendar.render();
+
+      // felhasználók betöltése
+      try {
+        const users = await apiGetUsers();
+        const $sel = $("#riport_felh_select");
+        $sel.empty();
+
+        (users || []).forEach(u => {
+          const oszt = u.osztalyTXT ? ` – ${u.osztalyTXT}` : "";
+          $sel.append(`<option value="${u.felh_id}">${u.teljes_nev}${oszt}</option>`);
+        });
+
+        // első frissítés
+        await refreshMonth();
+      } catch (e) {
+        console.error(e);
+        alert(e.message || "Hiba történt a betöltés során.");
+      }
+
+      $("#riport_frissit").on("click", async () => {
+        try { await refreshMonth(); } catch (e) { alert(e.message || "Hiba"); }
+      });
+
+      $("#riport_felh_select").on("change", async () => {
+        try { await refreshMonth(); } catch (e) { alert(e.message || "Hiba"); }
+      });
+
+      $("#riport_nap_bezar").on("click", () => $("#riport_nap_modal").addClass("hidden"));
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<script src="/modul/jogosultsagok/server_script/jogosultsagok.js"></script>
+<div class="mt-20 px-4 md:px-0">
+
+
+    
+    <div class="bg-white p-4 md:p-8 rounded-lg w-full max-w-7xl mx-auto">
+        <h2 class="pb-4 font-bold text-3xl md:text-4xl text-center">Jogosultságok</h2>
+        <div id="uj_felhasznalok_lista">
+            <h2 class="p-4 font-bold text-xl md:text-2xl text-left">Új felhasználók</h2>
+            <div id="uj_felhasznalok" class="w-full">
+                <div class="hidden md:grid grid-cols-[250px_300px_175px_1fr_1fr] gap-4 bg-gray-100 p-3 font-semibold">
+                    <div>Név</div>
+                    <div>Email</div>
+                    <div>Telefon</div>
+                    <div></div>
+                    <div></div>
+                </div>
+                <div id="uj_felhasznalok_grid" class="divide-y divide-gray-200">
+                    <!-- Itt jelennek meg a felhasználók dinamikusan -->
+                </div>
+            </div>
+        </div>
+        <div id="aktiv_felhasznalok_lista">
+            <div class="flex justify-between">
+                <h2 class="pb-4 font-bold text-xl md:text-2xl text-left">Aktív felhasználók</h2>
+                <button class="text-white bg-alapzold text-md rounded-lg px-2 py-2 m-2 md:w-32 font-bold hover:bg-green-800" id="osztalyok_modositas_gomb">Osztályok</button>
+            </div>
+            <div class="w-full">
+                <div class="hidden md:grid grid-cols-[200px_300px_180px_1fr_140px_175px] gap-4 bg-gray-100 p-3 font-semibold">
+                    <div>Név</div>
+                    <div>Email</div>
+                    <div>Telefon</div>
+                    <div>Osztály</div>
+                    <div>Jogosultság</div>
+                    <div></div>
+                </div>
+                <div id="felhasznalok_grid" class="divide-y divide-gray-200">
+                    <!-- Itt jelennek meg a felhasználók dinamikusan -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="osztalyok_modositas_modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white p-4 md:p-8 rounded-lg w-[30%] mx-auto">
+            <h2 class="pb-4 font-bold md:text-xl text-center">Osztályok módosítása</h2>
+            <div id="osztalyok_grid" class="divide-y divide-gray-200">
+                <!-- Itt jelennek meg a osztályok dinamikusan -->
+            </div>
+            <div class="flex justify-end gap-2 pt-4">
+                <button class="text-white bg-green-700 text-md rounded-lg p-2 font-bold hover:bg-green-800" id="osztaly_felvetele_gomb">Osztály felvétele</button>
+                <button class="text-white bg-alapzold text-md rounded-lg p-2 font-bold hover:bg-green-600" id="osztaly_mentes_gomb">Mentés</button>
+            </div>
+        </div>
+    </div>
+</div>
+

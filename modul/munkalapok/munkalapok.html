@@ -1,0 +1,538 @@
+<script src="/modul/munkalapok/server_script/munkalapok.js"></script>
+<div class="pt-16">
+    <div class="flex justify-center">
+        <div id="feladat_alert" class="hidden fixed top-24 bg-red-500 text-white text-center px-6 py-4 rounded shadow-lg transition-opacity duration-500 z-[9999]"></div>
+        <div id="munkalap_alert" class="hidden fixed top-24 bg-red-500 text-white text-center px-6 py-4 rounded shadow-lg transition-opacity duration-500 z-[9999]"></div>
+        <div id="chat_nincs_file_alert" class="hidden fixed top-24 bg-red-500 text-white text-center px-6 py-4 rounded shadow-lg transition-opacity duration-500 z-[9999]"></div>
+        <div id="aru_alert" class="hidden fixed top-24 bg-red-500 text-white text-center px-6 py-4 rounded shadow-lg transition-opacity duration-500 z-[9999]"></div>
+        <div id="munkalap_nem_lezarhato_alert" class="hidden fixed top-24 bg-red-500 text-lg text-white text-center px-6 py-4 rounded shadow-lg transition-opacity duration-600 z-[9999] font-bold max-w-[450px]"></div>
+    </div>
+    
+    <div class="flex">
+        
+        <div class="w-1/3 pt-4" id="projektek_lista_container">
+            <div class="justify-center w-full md:w-[54%] mx-auto md:px-0 px-4">
+                <button id="munkalap_inditas" class="bg-alapzold mb-2 text-white py-2 px-2 w-full rounded-md hover:bg-zold-300 munkalap_inditas">
+                    Munkalap indítása
+                </button>
+            
+                <div class="flex justify-between gap-2 pb-4">
+                    <div class="w-[48%]">
+                        <button type="button" class="bg-alapzold text-white py-2 px-2 w-full rounded-md hover:bg-zold-300" id="projektek_listazasa">Összes projekt</button>
+                    </div>
+                
+                    <div class="w-[48%]">
+                        <button type="button" class="bg-alapzold text-white py-2 px-2 w-full rounded-md hover:bg-zold-300" id="munkalapok_listazasa">Összes munkalap</button>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-between items-center p-2">
+                <h2 class="text-xl font-semibold pl-2">Összes projekt</h2>
+            
+                <div class="pr-2">
+                    <input type="text" placeholder="Keresés" id="projekt_kereses" class="border border-zold-300 rounded-lg p-2 shadow-md">
+                </div>
+            </div>
+            <hr>
+              <div class="flex justify-between items-center p-2">
+                <div><p class="font-bold text-xl pl-2">Projekt megnevezése</p></div>
+                <div class="pr-12"><p class="text-right font-bold text-xl md:block hidden">Folyamat</p></div>
+              </div>
+        
+            <div id="projekt_lista" class="grid grid-cols-1 gap-4 max-h-[calc(100vh-19rem)] pl-2 overflow-y-auto example">
+
+            </div>
+        </div>
+        <div class="w-1/3  pt-4" id="munkalapok_lista_container">
+            <div class="justify-center w-full md:w-[54%] mx-auto md:px-0 px-4">
+                <button id="munkalap_inditas" class="bg-alapzold mb-2 text-white py-2 px-2 w-full rounded-md hover:bg-zold-300 munkalap_inditas">
+                    Munkalap indítása
+                </button>
+            
+                <div class="flex justify-between gap-2 pb-4">
+                    <div class="w-[48%]">
+                        <button type="button" class="bg-alapzold text-white py-2 px-2 w-full rounded-md hover:bg-zold-300" id="projektek_listazasa">Összes projekt</button>
+                    </div>
+                
+                    <div class="w-[48%]">
+                        <button type="button" class="bg-alapzold text-white py-2 px-2 w-full rounded-md hover:bg-zold-300" id="munkalapok_listazasa">Összes munkalap</button>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-between items-center p-2">
+                <h2 class="text-xl font-semibold pl-2">Összes munkalap</h2>
+                <div class="pr-2">
+                    <input type="text" placeholder="Keresés" id="munkalap_kereses" class="border border-zold-300 rounded-lg p-2 shadow-md">
+                </div>
+            </div>
+            <hr>
+            
+              <div class="flex justify-between items-center p-2">
+                <div><p class="font-bold text-xl pl-2">Munkalap megnevezése</p></div>
+                <div class="pr-12"><p class="text-right font-bold text-xl md:block hidden">Folyamat</p></div>
+              </div>
+        
+            <div id="munkalapok_lista" class="grid grid-cols-1 gap-4 md:max-h-[calc(100vh-18rem)]  pl-2 overflow-y-auto example">
+
+            </div>
+        </div>
+        <div class="w-2/3 bg-vajszin p-4 md:border-l-4 h-[calc(100vh-4rem)] md:border-alapzold" id="munkalapok_jobb_pc">
+            <h2 class="text-2xl font-semibold mb-4" id="munkalapok_jobb_pc_cim"></h2>
+
+            <div class="grid grid-cols-3 gap-4 mx-auto grid-flow-col auto-cols-fr items-start " >
+                
+                <!-- Completed Projects -->
+                <div class="bg-yellow-100 rounded-xl shadow-xl min-h-26 " id="inditas_alatt_munkalapok_container">
+                    <div class="h-2 bg-yellow-500 rounded-t-xl"></div>
+                    <div class="flex items-center bg-yellow-100 text-yellow-800 px-3 py-1 font-medium text-xl pb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                        </svg>
+                        Indítás alatt
+                    </div>
+                    
+                    <div class="space-y-4">
+                            <div class="text-center text-gray-500 text-xl mt-2 " id="ures_inditas_alatt_munkalapok">Üres</div>
+                            <div id="inditas_alatt_munkalapok" class="md:max-h-[calc(100vh-13rem)] overflow-y-auto example">
+                                
+                            </div>
+                    </div>
+                </div>
+            
+        
+        
+                <!-- In Progress Projects -->
+                <div class="bg-blue-100 rounded-xl shadow-xl min-h-26 " id="folyamatban_munkalapok_container">
+                    <div class="h-2 bg-blue-500 rounded-t-xl"></div>
+                    <div class="flex items-center bg-blue-100 text-blue-800 px-3 py-1  font-medium text-xl pb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                        </svg>
+                        Folyamatban
+                        </div>
+                    <div class="space-y-4">
+                        <div class="text-center text-gray-500 text-xl mt-2" id="ures_folyamatban_munkalapok">Üres</div>
+                            
+                            
+                            <div id="folyamatban_munkalapok" class="md:max-h-[calc(100vh-13rem)] overflow-y-auto example">
+                                    <!-- Munkalapok JavaScript-tel betöltve -->
+                            </div>
+                        
+                    </div>
+                </div>
+        
+                <!-- Starting Soon Projects -->
+               
+
+                <div class=" bg-green-100 rounded-xl shadow-xl min-h-26" id="lezart_munkalapok_container">
+                    <div class="h-2 bg-alapzold rounded-t-xl"></div>
+                    <div class="flex items-center bg-green-100 text-green-800 px-3 py-1 font-medium text-xl pb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        Elkészült
+                    </div>
+                    <div class="space-y-4">
+                        <div class="text-center text-gray-500 text-xl mt-2" id="ures_lezart_munkalapok">Üres</div>
+                           
+                            <div id="lezart_munkalapok" class="md:max-h-[calc(100vh-13rem)] overflow-y-auto example">
+                                <!-- Munkalapok JavaScript-tel betöltve -->
+                            </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        
+            <div id="projekt_munkalapok_mobil" class="md:hidden bg-white w-full max-h-[calc(100vh-3rem)] overflow-y-auto hidden">
+                <div class="p-4 w-full">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 id="projekt_munkalapok_mobil_cim" class="text-2xl font-semibold text-zold-300"></h2>
+                        <button id="projekt_munkalapok_mobil_bezar" class="bg-alapzold text-white p-2 rounded-md hover:bg-zold-300">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 18L18 6M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- Indítás alatt -->
+                        <div class="bg-yellow-100 rounded-xl shadow-xl p-4">
+                            <div class="flex items-center text-yellow-800 mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                                </svg>
+                                <h3 class="font-semibold text-lg">Indítás alatt</h3>
+                            </div>
+                            <div id="inditas_alatt_munkalapok_mobil" class="space-y-2">
+                                <div class="text-center text-gray-500" id="ures_inditas_alatt_munkalapok_mobil">Üres</div>
+                            </div>
+                        </div>
+        
+                        <!-- Folyamatban -->
+                        <div class="bg-blue-100 rounded-xl shadow-xl p-4">
+                            <div class="flex items-center text-blue-800 mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                                </svg>
+                                <h3 class="font-semibold text-lg">Folyamatban</h3>
+                            </div>
+                            <div id="folyamatban_munkalapok_mobil" class="space-y-2">
+                                <div class="text-center text-gray-500" id="ures_folyamatban_munkalapok_mobil">Üres</div>
+                            </div>
+                        </div>
+        
+                        <!-- Elkészült -->
+                        <div class="bg-green-100 rounded-xl shadow-xl p-4">
+                            <div class="flex items-center text-green-800 mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                </svg>
+                                <h3 class="font-semibold text-lg">Elkészült</h3>
+                            </div>
+                            <div id="lezart_munkalapok_mobil" class="space-y-2">
+                                <div class="text-center text-gray-500" id="ures_lezart_munkalapok_mobil">Üres</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="md:w-2/3 w-full p-4 hidden md:border-l-4 md:border-alapzold" id="munkalap_adatok_container">
+            <div class="md:flex justify-between pb-4">
+                <h2 class="text-2xl font-semibold pb-2 md:pb-0">Munkalap Részletei</h2>
+                <div class="flex gap-2">
+                    <button id="munkalap_vissza" class="bg-alapzold text-white py-2 px-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 block md:hidden">
+                        <div class="text-white">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="rotate-180">
+                                <g clip-path="url(#clip0_305_31778)">
+                                    <path d="M17.3101 8L21.2501 12L17.3101 16" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                                    <path d="M21.19 12H2.75" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                                </g>
+                                <defs>
+                                    <clipPath id="clip0_305_31778">
+                                        <rect width="24" height="24" fill="none"/>
+                                    </clipPath>
+                                </defs>
+                            </svg>
+                        </div>
+                    </button>
+                    <button id="feladat_kezd" class="bg-alapzold text-white py-2 px-4 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 hidden">Feladat indítása</button>
+                    <button id="feladat_vege" class="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 hidden">Feladat lezárása</button>
+                    <button id="feladat_ujrainditas" class="bg-alapzold text-white py-2 px-4 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 hidden">Feladat újraindítása</button>
+                </div>
+            </div>
+            <div class="flex justify-between items-center w-full">
+                <div>
+                    <h1 id="munkalap_nev" class="text-2xl font-semibold text-zold-300 md:max-w-none max-w-[250px]"></h1>
+                    <p id="projekt_nev" class="text-md text-gray-500"></p>
+                    <p id="orak_szama"></p>
+                </div>
+                <div class="text-center items-center">
+                    <p id="felvet_datum" class="text-lg text-gray-500"></p>
+                    <div id="munkalap_specifikacio" class="flex items-center"></div>
+                </div>
+            </div>
+            <div id="vonal"></div>
+            <div id="orak_felh" class="flex items-center py-2"></div>
+
+            <div id="mobil_orak_felh" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-[100]">
+                <div class="bg-white rounded shadow-lg p-4 w-[90%]">
+                    <div class="p-4">
+                        <h3 class="text-lg font-bold pb-4">Ledolgozott órák</h3>
+                        <div class="space-y-3" id="orak_felh_lista">
+                        </div>
+                    </div>
+                    <div class="flex justify-end">
+                        <button id="orak_felh_mobil_gomb" class="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-300">Mégse</button>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div id="munkalap_tartalom" class="hidden bg-white rounded-lg shadow-md flex flex-col mb-2 hover:shadow-md transition-shadow duration-300 mt-2 h-[calc(100vh-21rem)]">
+                <input type="hidden" id="munkalap_id_hidden" class="hidden">
+                <div id="munkalap_chat_header" class="md:flex items-center justify-between text-xl font-bold bg-zold-300 text-white p-2 rounded-t-lg pl-4 flex-none">
+                    <div class="flex items-center justify-between">
+                    <h1 id="munkalap_nev_chat" class="md:max-w-none max-w-[250px]"></h1>
+                    <div class="flex items-center gap-2 md:hidden block">
+                    <img id="pinek_megjelenites_mobil" src="assets/teli_pin.png" alt="close" class="w-6 h-6 transition-transform hover:scale-110 block md:hidden">
+                    <img id="munkalap_chat_nagyitas_mobil" src="assets/ratio_icon.svg" alt="close" class="w-8 h-8 transition-transform hover:scale-110 block md:hidden">
+                    </div>
+                    </div>
+                    <div class="justify-between">
+                        <div class="md:flex items-center justify-center gap-2">
+                            <div class="relative">
+                                <div id="chat_tipus_szuro" class="border border-gray-300 rounded-lg p-2 text-sm text-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-alapzold-500 focus:border-alapzold-500 md:min-w-32 w-24 flex items-center justify-between">
+                                    <span class="md:block hidden">Összes típus</span>
+                                    <span class="md:hidden">Összes</span>
+                                    <svg class="w-4 h-4 inline-block ml-2" fill="currentColor" viewBox="0 0 20 20"><path d="M5.23 7.21a.75.75 0 011.06 0L10 10.44l3.71-3.23a.75.75 0 111.06 1.06l-4.25 3.5a.75.75 0 01-1.06 0l-4.25-3.5a.75.75 0 010-1.06z"/></svg>
+                                </div>
+                                <div id="custom_dropdown" class="hidden text-sm text-zold-500 absolute z-10 bg-white border border-gray-300 rounded-lg mt-1 w-full">
+                                </div>
+                            </div>
+                            <img id="pinek_megjelenites" src="assets/teli_pin.png" alt="close" class="w-6 h-6 transition-transform hover:scale-110 md:block hidden">
+                            <img id="munkalap_chat_nagyitas" src="assets/ratio_icon.svg" alt="close" class="w-8 h-8 transition-transform hover:scale-110 md:block hidden">
+                        </div>
+                        
+                    </div>
+                </div>
+                <div id="munkalap_chat" class="flex flex-col min-h-0 flex-1">
+                    <div id="chat_uzenetek_container" class="flex-1 overflow-y-auto p-2 min-h-0">
+                    </div>
+                    
+                    <form id="chat_form" class="flex-none">
+                        <div id="uploadedFilesContainer" class="grid grid-cols-1 gap-2 mt-2"></div>
+                        <div class="border-t border-gray-200 p-4">
+                            <div id="chat_textarea_container" class="relative bg-white rounded-lg border border-gray-300 focus-within:border-green-500 focus-within:ring-1 focus-within:ring-green-500">
+                                <textarea 
+                                    class="w-full p-3 pr-12 resize-none outline-none min-h-[80px] max-h-[80px] text-gray-700 placeholder-gray-400"
+                                    placeholder="Írd ide az üzeneted..."
+                                    rows="2"
+                                    id="chat_textarea"
+                                    name="chat_textarea"
+                                ></textarea>
+                                <input type="hidden" id="bejegyzes_tipus" name="bejegyzes_tipus">
+                                
+                                <div class="absolute bottom-2 right-2">
+                                    <label for="fileInput" class="cursor-pointer p-2 rounded-full hover:bg-green-50 text-green-500 transition-colors">
+                                        <input type="file" id="fileInput" name="fileInput" class="hidden" />
+                                    </label>
+                                    <div class="relative inline-block">
+                                        <button id="uploadButton" class="w-8 h-8 focus:outline-none">
+                                            <img src="assets/plus.png" alt="fajl" class="w-8 h-8">
+                                        </button>
+                                        <div id="uploadMenu" class="hidden text-zold-500 w-40 absolute bottom-full mb-2 right-0 bg-white border border-gray-300 rounded shadow-lg z-[100]">
+                                            <ul class="list-none m-0 p-0">
+                                                <li id="fajl_feltolt_lista" class="px-4 py-2 hover:bg-zold-300 hover:text-white cursor-pointer">Fájl feltöltés</li>
+                                                <li id="tipus_megadas_lista" class="px-4 py-2 hover:bg-zold-300 cursor-pointer relative">
+                                                    Típus megadása
+                                                    <div id="tipus_almenu" class="hidden absolute right-full top-0 w-40 bg-white border border-gray-300 rounded shadow-lg z-[101]">
+                                                        <ul id="tipus_almenu_lista" class="list-none m-0 p-0">
+                                                        </ul>
+                                                    </div>
+                                                </li>
+                                                <li id="aruk_hozzaadas_lista" class="px-4 py-2 hover:bg-zold-300 hover:text-white cursor-pointer">Áru hozzáadása</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+<div id="munkalap_inditas_modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-[100]">
+    <div class="bg-white rounded shadow-lg p-6 md:w-2/3 w-[90%]"> <!-- Changed to w-full and added max-w-lg -->
+        <h2 class="text-xl font-bold mb-4 text-zold-300">Munkalap indítása</h2>
+        <div id="munkalap_inditas_hiba"
+            class="hidden mb-4 p-4 bg-red-100 text-red-700 border border-red-500 rounded-lg">
+            <p><strong>Hiba:</strong> A munkalap neve nem lehet üres!</p>
+        </div>
+        <form id="munkalap_inditas_form">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4"> <!-- Changed to grid-cols-1 for small screens -->
+            <div>
+                <label for="uj_munkalap_nev" class="block text-sm font-medium text-gray-700">Munkalap neve*</label>
+                <input type="text" id="uj_munkalap_nev" name="uj_munkalap_nev"
+                    class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+            </div>
+            <div class="relative">
+                <label for="projekt_nev" class="block text-sm font-medium text-gray-700">Projekt neve</label>
+                <input type="text" id="projekt_nev" name="projekt_nev"
+                    class="projekt_nev_input mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+                <input type="hidden" id="projekt_id" name="projekt_id" class="projekt_id">
+                <ul class="autocomplete-results absolute left-0 w-full bg-white border rounded hidden z-[10000]"></ul>
+            </div>
+            <div>
+                <label for="becsult_munkaido" class="block text-sm font-medium text-gray-700">Becsült munkaidő</label>
+                <input type="text" id="becsult_munkaido" name="becsult_munkaido" placeholder="Óra" inputmode="numeric"
+                    class="harmas_tagolas mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+            </div>
+            <div>
+                <label for="szoftverkoltseg" class="block text-sm font-medium text-gray-700">Szoftverköltség</label>
+                <input type="text" id="szoftverkoltseg" name="szoftverkoltseg" placeholder="Ft" inputmode="numeric"
+                    class="koltseg_input harmas_tagolas mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+            </div>
+            <div>
+                <label for="hardverkoltseg" class="block text-sm font-medium text-gray-700">Hardverköltség</label>
+                <input type="text" id="hardverkoltseg" name="hardverkoltseg" placeholder="Ft" inputmode="numeric"
+                    class="koltseg_input harmas_tagolas mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+            </div>
+            <div>
+                <label for="osszkoltseg" class="block text-sm font-medium text-gray-700">Összköltség</label>
+                <input type="text" id="osszkoltseg" name="osszkoltseg"
+                    class="harmas_tagolas mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3" disabled>
+                <input type="hidden" id="osszkoltseg_hidden" name="osszkoltseg_hidden">
+            </div>
+            <div>
+                <label for="jog_csoportok" class="block text-sm font-medium text-gray-700">Csoportok:</label>
+                <div id="jog_csoportok" class="md:flex flex-row gap-4 flex-wrap text-zold-300 text-xl font-bold">
+
+                </div>
+            </div>          
+        </div>
+        <div class="mt-4">
+            <label for="munkalap_specifikacio" class="block text-sm font-medium text-gray-700">Munkalap specifikációja</label>
+            <input type="file" id="munkalap_specifikacio" name="munkalap_specifikacio" accept=".doc,.docx,.pdf,image/*" class="w-full text-sm text-alapzold
+            file:mr-4 file:py-2 file:px-4
+            file:rounded-lg file:border-0
+            file:text-sm file:font-semibold
+            file:bg-alapzold file:text-white
+            hover:file:bg-zold-300 p-4">
+        </div>
+        </form>
+        <div class="mt-4 flex justify-end gap-4">
+            <button id="munkalap_inditas_bezaras" class="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600">
+                Bezárás
+            </button>
+            <button id="munkalap_inditas_gomb" class="bg-alapzold text-white py-2 px-4 rounded-md hover:bg-zold-300">
+                Munkalap indítása
+            </button>
+        </div>
+    </div>
+</div>
+<div id="biztosan_torol" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-[100]">
+    <div class="bg-white rounded shadow-lg p-6"> <!-- Changed to w-full and added max-w-lg -->
+        <h2 class="text-xl font-bold mb-4 text-zold-300">Biztosan törlöd a bejegyzésedet?</h2>
+        <div class="flex justify-end gap-4">
+            <button id="biztosan_torol_bezaras" class="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600">
+                Nem
+            </button>
+            <button id="biztosan_torol_gomb" class="bg-alapzold text-white py-2 px-4 rounded-md hover:bg-zold-300">
+                Igen
+            </button>
+        </div>
+    </div>
+</div>
+<div id="chat_szerkesztes" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-[100]">
+    <div class="bg-white rounded shadow-lg p-6 md:w-[50%] w-[90%]"> <!-- Changed to w-full and added max-w-lg -->
+        <h2 class="text-xl font-bold mb-4 text-zold-300">Üzenet szerkesztése</h2>
+        <textarea id="chat_szerkesztes_szoveg" class="w-full max-h-[50vh] border border-gray-300 rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 p-2"></textarea>
+        <div id="chat_szerkesztes_fajlok" class="flex-col gap-2"></div>
+        <div class="mt-4 flex gap-2">
+            <div>
+                <form id="chat_szerkesztes_fajl_form">
+                    <label for="chat_szerkesztes_fajl_feltoltes" class="block text-sm font-medium text-gray-700">Fájl feltöltése</label>
+                    <input type="file" id="chat_szerkesztes_fajl_feltoltes" name="chat_szerkesztes_fajl_feltoltes" accept=".doc,.docx,.pdf,image/*" class="w-full text-sm text-alapzold
+                    file:mr-4 file:py-2 file:px-4
+                    file:rounded-lg file:border-0
+                    file:text-sm file:font-semibold
+                    file:bg-alapzold file:text-white
+                    hover:file:bg-zold-300 p-4">
+                </form>
+            </div>
+            <div class="flex items-center">
+                <button id="chat_szerkesztes_fajl_feltoltes_gomb">
+                    <img src="assets/plus.png" alt="fajl" class="w-8 h-8">
+                </button>
+            </div>
+        </div>
+        <div class="flex justify-end gap-4">
+            <button id="chat_szerkesztes_bezaras" class="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600">
+                Bezárás
+            </button>
+            <button id="chat_szerkesztes_gomb" class="bg-alapzold text-white py-2 px-4 rounded-md hover:bg-zold-300">
+                Mentés
+            </button>
+        </div>
+    </div>
+</div>
+<div id="aru_hozzaadas_munkalap" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-[100]">
+    <div class="bg-white rounded shadow-lg p-6 md:w-[50%] w-[90%]">
+      <h2 class="text-xl font-bold mb-4 text-zold-300">Áru hozzáadása</h2>
+      <form id="aru_hozzaadas_form">
+        <div class="mb-4 flex flex-col md:flex-row gap-2">
+            <!-- Bal oldali mező: Áru neve -->
+            <div class="w-full md:w-1/2 relative">
+            <label for="aru_hozzaadas_nev" class="block text-sm font-medium text-gray-700">Áru neve</label>
+            <input 
+                type="text" 
+                id="aru_hozzaadas_nev" 
+                class="w-full border border-gray-300 rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 p-2"
+            />
+            <input type="hidden" id="aru_hozzaadas_id" name="aru_hozzaadas_id">
+            <input type="hidden" id="aru_keszlet_darab" name="aru_keszlet_darab">
+            <input type="hidden" id="aru_hozzaadas_raktar_id" name="aru_hozzaadas_raktar_id">
+            <ul id="autocomplete_results_aru" class="absolute left-0 w-full bg-white border rounded hidden z-[10000]"></ul>
+            </div>
+    
+            <!-- Jobb oldali mező: Darabszám + plusz gomb -->
+            <div class="w-full md:w-1/2">
+            <label for="aru_darab" class="block text-sm font-medium text-gray-700">Darabszám</label>
+            <div class="flex gap-2 items-center">
+                <input 
+                type="text" 
+                id="aru_darab" 
+                class="w-full border border-gray-300 rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 p-2"
+                />
+                <img 
+                src="assets/plus.png" 
+                alt="aru_hozzaadas_gomb" 
+                id="aru_hozzaadas_gomb"
+                class="w-8 h-8 rounded-full cursor-pointer transition-all duration-300 hover:scale-110"
+                />
+            </div>
+            </div>
+        </div>
+      </form>
+      
+      <!-- Bezárás és végleges Hozzáadás gombok -->
+      <div class="flex justify-end gap-4 md:mt-4 pt-2">
+        <button 
+          id="aru_hozzaadas_bezaras" 
+          class="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600"
+        >
+          Bezárás
+        </button>
+        <button 
+          id="aru_hozzaadas_vegleges_gomb" 
+          class="bg-alapzold text-white py-2 px-4 rounded-md hover:bg-zold-300"
+        >
+          Hozzáadás
+        </button>
+      </div>
+  
+      <!-- Itt jelennek meg a felvitt áruk, reszponzívan gridben -->
+      <div 
+        id="aru_lista" 
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4 max-h-[50vh] overflow-y-auto example"
+      ></div>
+    </div>
+</div>
+<div id="pinelt_uzenetek" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-[100]">
+    <div class="bg-white rounded shadow-lg p-4 md:p-6 md:w-[50%] w-[90%]">
+      <h2 class="text-xl font-bold mb-4 text-zold-300">Pinelt üzenetek</h2>
+      <div id="pinelt_uzenetek_lista" class="max-h-[80vh] overflow-y-auto example"></div>
+
+      <div class="flex justify-end gap-4 md:mt-4 pt-2">
+        <button 
+          id="pinelt_uzenetek_bezaras" 
+          class="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600"
+        >
+          Bezárás
+        </button>
+      </div>
+  </div>

@@ -1,0 +1,466 @@
+<script src="/modul/projektek/server_script/projektek.js"></script>
+<div class="pt-20">
+    <div class="flex justify-center">
+        <div id="datum_alert" class="hidden fixed top-24 bg-alapzold text-white text-center px-6 py-4 font-bold text-xl rounded-lg shadow-lg transition-opacity duration-500 z-[9999]"></div>
+        <div id="form_alert" class="hidden max-w-[90%] md:max-w-full fixed top-24 bg-red-500 text-white text-center px-6 py-4 font-bold text-xl rounded-lg shadow-lg transition-opacity duration-500 z-[9999]"></div>
+    </div>
+    
+    <div class="flex justify-between px-4">
+        <div class="flex p-0md:p-2 gap-4">
+
+            <div>
+                <button type="button" class="bg-alapzold text-white py-2 px-4 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500" id="projektek">Projekteim</button>
+            </div>
+            
+            <div>
+                <button type="button" class="bg-alapzold text-white py-2 px-2 md:px-4 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500" id="projekt_inditas">Projekt indítás</button>
+            </div>
+        </div>
+
+
+        
+            <div id="projektek_lista" class="p-0 md:p-2 flex gap-2">
+                <button type="button" class="bg-alapzold text-white font-bold py-0 md:py-2 px-2 md:px-4 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-200 flex items-center space-x-2" id="layout1">
+                    <img src="../../assets/lista_icon.png" id="lista_ikon"
+                        class="h-6 w-6">
+                    <span class="hidden md:block">Lista</span>
+                </button>
+            
+                    <button type="button" class="bg-alapzold text-white font-bold py-0 md:py-2 px-2 md:px-4 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-200 flex items-center space-x-2" id="layout3">
+                        <img src="../../assets/board_icon.png" id="board_ikon" 
+                            class="h-6 w-6">
+                        <span class="hidden md:block">Tábla</span>
+                        </button>
+
+
+                        <button type="button" class="bg-alapzold text-white font-bold py-0 md:py-2 px-2 md:px-4 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-200 flex items-center space-x-2" id="layout2">
+                            <img src="../../assets/calendar_icon.png" id="naptar_ikon" 
+                                class="h-6 w-6">
+                            <span class="hidden md:block">Naptár</span>
+                            </button>
+            </div>
+    </div>
+
+    <div class="hidden" id="projektek_div">
+        
+            <div id="projektek_lista_layout2" class="p-2 hidden">
+        
+                <div class="w-[80%] mx-auto bg-white shadow-lg rounded-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">PROJEKT HATÁRIDŐK</h2>
+                    <div id="calendar"></div>
+                </div>
+        
+                <div id="eventModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+                        <h2 class="text-xl font-bold mb-2" id="modalTitle"></h2>
+                        <p id="modalDate" class="text-gray-600"></p>
+                        <button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Bezárás</button>
+                    </div>
+                </div>
+            </div>
+        
+        
+            <div id="projektek_lista_layout3" class="p-2 hidden">
+
+                <div class="grid grid-rows-1 md:grid-cols-3 gap-4 mx-auto md:grid-flow-col auto-cols-fr items-start" >
+
+                        <!-- Completed Projects -->
+                        <div class="bg-yellow-100 rounded-xl shadow-xl min-h-26 h-fit" id="inditas_alatt_munkalapok_container">
+                            <div class="h-2 bg-yellow-500 rounded-t-xl"></div>
+                            <div class="flex items-center bg-yellow-100 text-yellow-800 px-3 py-1 font-medium text-xl pb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                                </svg>
+                                Indítás alatt
+                            </div>
+                            
+                            <div class="space-y-4">
+                                
+                                    <div id="layout3_inditas_alatt_projektek" class="p-2">
+                                        
+                                    </div>
+                            </div>
+                        </div>
+                    
+                
+                
+                        <!-- In Progress Projects -->
+                        <div class="bg-blue-100 rounded-xl shadow-xl min-h-26 h-fit" id="folyamatban_munkalapok_container">
+                            <div class="h-2 bg-blue-500 rounded-t-xl"></div>
+                            <div class="flex items-center bg-blue-100 text-blue-800 px-3 py-1  font-medium text-xl pb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                                </svg>
+                                Folyamatban
+                                </div>
+                            <div class="space-y-4">
+                                    
+                                <div id="layout3_folyamatban_projektek" class="p-2">
+
+                                </div>
+                
+                            </div>
+                        </div>
+
+                            <div class="bg-green-100 rounded-xl shadow-xl min-h-26 h-fit" id="lezart_munkalapok_container">
+                                <div class="h-2 bg-alapzold rounded-t-xl"></div>
+                                <div class="flex items-center bg-green-100 text-green-800 px-3 py-1 font-medium text-xl pb-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                    </svg>
+                                    Elkészült
+                                </div>
+                                <div class="space-y-4">
+                                    
+                                    <div id="layout3_lezart_projektek" class="p-2">
+
+                                    </div>
+
+                                </div>
+                            </div>
+                </div>
+            </div>
+        
+            <div id="projektek_lista_layout1" class="hidden p-2">
+                <div class="bg-white p-4 md:p-8 rounded-lg w-full mx-auto">
+                    <div class="pr-0 md:pr-5 mb-2 flex justify-between">
+                        <div class="flex items-center">
+                        
+                            <h2 class=" font-bold text-2xl text-left">Összes projekt</h2>
+                        </div>
+                        <input type="text" id="search_box" placeholder="Keresés..." class="px-4 py-2 w-36 md:w-48 border border-zold-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-zold-500 focus:border-zold-300 placeholder-gray-400">
+                    </div>
+                    <div class="w-full">
+                        <div class="md:grid grid-cols-[50px_50px_1fr_1fr_1fr_1fr_1fr] gap-4 bg-alapzold p-3 font-semibold hidden">
+                            <div></div>
+                            <div class="text-white">ID
+                                <span class="rendezes_gomb" data-column="projekt_id" data-order="asc">
+                                    <svg class="sort-icon h-4 w-4 inline transform origin-center" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="currentColor">
+                                        <path d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128z"/>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="text-white">
+                                Név
+                                <span class="rendezes_gomb" data-column="projekt_nev" data-order="asc">
+                                    <svg class="sort-icon h-4 w-4 inline transform origin-center" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="currentColor">
+                                        <path d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128z"/>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="text-white">
+                                Folyamat
+                                <span class="rendezes_gomb" data-column="ossz_ora" data-order="asc">
+                                    <svg class="sort-icon h-4 w-4 inline transform origin-center" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="currentColor">
+                                        <path d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128z"/>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="text-white">
+                                Szerződött összeg
+                                <span class="rendezes_gomb" data-column="teljes_osszeg" data-order="asc">
+                                    <svg class="sort-icon h-4 w-4 inline transform origin-center" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="currentColor">
+                                        <path d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128z"/>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="text-white">
+                                Állapot
+                                <span class="rendezes_gomb" data-column="allapot_nev" data-order="asc">
+                                    <svg class="sort-icon h-4 w-4 inline transform origin-center" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="currentColor">
+                                        <path d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128z"/>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="text-white">
+                                Határidő
+                                <span class="rendezes_gomb" data-column="hatarido" data-order="asc">
+                                    <svg class="sort-icon h-4 w-4 inline transform origin-center" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="currentColor">
+                                        <path d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128z"/>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div id="osszes_projekt_grid" class="divide-y divide-gray-200">
+                            <!-- Itt jelennek meg a felhasználók dinamikusan -->
+                        </div>
+
+                        <div class="md:hidden block grid grid-cols-[40px_1fr_90px] gap-4 bg-alapzold p-3 font-semibold ">
+                            <div class="text-white">ID
+                                <span class="rendezes_gomb" data-column="projekt_id" data-order="asc">
+                                    <svg class="sort-icon h-4 w-4 inline transform origin-center" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="currentColor">
+                                        <path d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128z"/>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="text-white">
+                                Név
+                                <span class="rendezes_gomb" data-column="projekt_nev" data-order="asc">
+                                    <svg class="sort-icon h-4 w-4 inline transform origin-center" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="currentColor">
+                                        <path d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128z"/>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="text-white">
+                                Folyamat
+                                <span class="rendezes_gomb" data-column="ossz_ora" data-order="asc">
+                                    <svg class="sort-icon h-4 w-4 inline transform origin-center" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="currentColor">
+                                        <path d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128z"/>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div id="osszes_projekt_grid_mobile" class="divide-y divide-gray-200">
+                            <!-- Itt jelennek meg a felhasználók dinamikusan -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+        
+        </div>
+
+    
+
+
+
+
+
+
+
+        
+        
+
+
+
+
+
+
+
+        <div class="bg-white p-8 rounded-lg mt-2 w-full max-w-7xl mx-auto BalrolBe hidden" id="projekt_form_dialog">
+            <h2 class="text-2xl font-bold text-center mb-6">PROJEKT INDITÁS</h2>
+            <div id="hibas_projekt_inditas" class="bg-red-100 text-red-700 p-4 rounded mb-4" style="display: none;">
+                <strong>Hiba!</strong>
+                <span id="hibauzenet"></span>
+              </div>
+            <form class="w-full" id="projekt_form">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mb-2 relative">
+                        <label for="partner_nev" class="block text-sm font-medium text-gray-700">Partner Név:</label>
+                        <input type="text" id="partner_nev" name="partner_nev" class="szukseges_input mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <input type="hidden" id="partner_id" name="partner_id" value="">
+                        <ul  class="autocomplete-results absolute bg-white border rounded w-full hidden z-10">
+                        </ul>
+
+                    </div>
+
+                    <div class="mb-2">
+                        <label for="projekt_nev" class="block text-sm font-medium text-gray-700">Projekt Név:</label>
+                        <input type="text" id="projekt_nev" name="projekt_nev" class="szukseges_input mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+                    </div>
+
+                    <div class="mb-2">
+                        <label for="hatar_ido" class="block text-sm font-medium text-gray-700">Határidő:</label>
+                        <input type="text" id="hatar_ido" name="hatar_ido" class="szukseges_input mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+
+                    </div>
+                    <div class="mb-2">
+                        <label for="oradij" class="block text-sm font-medium text-gray-700">Óradíj:</label>
+                        <input type="text" id="oradij" name="oradij" class="harmas_tagolas szukseges_input mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500" inputmode="numeric">
+
+                    </div>
+                    <div class="mb-2">
+                        <label for="osszes_szoftver_osszeg" class="block text-sm font-medium text-gray-700">Teljes Szoftver összeg:</label>
+                        <input type="text" id="osszes_szoftver_osszeg" name="osszes_szoftver_osszeg" class="harmas_tagolas w-full mt-1 px-3 py-2 border border-gray-300 rounded-md" inputmode="numeric">
+                    </div>
+                    <div class="mb-2">
+                        <label for="osszes_hardver_osszeg" class="block text-sm font-medium text-gray-700">Teljes Hardver összeg:</label>
+                        <input type="text" id="osszes_hardver_osszeg" name="osszes_hardver_osszeg" class="harmas_tagolas w-full mt-1 px-3 py-2 border border-gray-300 rounded-md" inputmode="numeric">
+                    </div>
+                    <div class="mb-2">
+                        <label for="jog_csoportok" class="block text-sm font-medium text-gray-700">Csoportok:</label>
+                        <div id="jog_csoportok" class="md:flex flex-row gap-4 flex-wrap text-zold-300 text-xl font-bold">
+
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div class="mt-2">
+                    <h3 class="text-lg font-semibold mb-2">Munkalap bevitel</h3>
+                    <input type="hidden" id="modul_kep_utvonal" name="modul_kep_utvonal" value="">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label for="modul_nev" class="block text-sm font-medium text-gray-700">Modul neve:</label>
+                            <input type="text" id="modul_nev" class="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md" placeholder="Modul neve">
+                        </div>
+                        <div>
+                            <label for="munkaido" class="block text-sm font-medium text-gray-700">Becsült munkaidő:</label>
+                            <input type="text" id="munkaido" class="harmas_tagolas w-full mt-1 px-3 py-2 border border-gray-300 rounded-md" placeholder="Becsült munkaidő" inputmode="numeric">
+                        </div>
+                        <div>
+                            <label for="szoftver_osszeg" class="block text-sm font-medium text-gray-700">Szoftver összeg:</label>
+                            <input type="text" id="szoftver_osszeg" class="harmas_tagolas w-full mt-1 px-3 py-2 border border-gray-300 rounded-md" placeholder="Szoftver összeg" inputmode="numeric">
+                        </div>
+                        <div>
+                            <label for="hardver_osszeg" class="block text-sm font-medium text-gray-700">Hardver összeg:</label>
+                            <input type="text" id="hardver_osszeg" class="harmas_tagolas w-full mt-1 px-3 py-2 border border-gray-300 rounded-md" placeholder="Hardver összeg" inputmode="numeric">
+                        </div>
+                        <div>
+                            <label for="specifikacio_kep" class="block text-sm font-medium text-gray-700">Specifikáció</label>
+                            <input type="file" id="specifikacio_kep" name="specifikacio_kep" accept=".doc,.docx,.pdf,image/*"
+                                class="form-szamla-input block w-full text-sm text-alapzold
+                                        file:mr-4 file:py-2 file:px-4
+                                        file:rounded-lg file:border-0
+                                        file:text-sm file:font-semibold
+                                        file:bg-alapzold file:text-white
+                                        hover:file:bg-zold-300 p-4">
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="button" class="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500" id="munkalap_hozzadas">+ Munkalap hozzáadása</button>
+                    </div>
+
+                    <div class="mt-6">
+                        <h3 class="text-lg font-semibold mb-2">Munkalapok (<span id="munkalap-szamlalo">0</span>)</h3>
+                        <div id="module-header" class="grid grid-cols-7 gap-2 font-bold bg-alapzold text-center p-2 rounded-md hidden"></div>
+                        <div id="module-grid" class="grid gap-4 rounded-lg">
+                            <!-- Dinamikusan generált modulok itt jelennek meg -->
+                        </div>
+                        <div id="module-footer" class="grid grid-cols-7 gap-2 font-bold bg-alapzold text-center p-2 rounded-md hidden"></div>
+                        <div id="munkalapok_osszeg_container" class="mt-4 text-right font-bold text-lg hidden">
+                            Munkalapok összege: <span id="munkalapok_osszeg">0 Ft</span>
+                        </div>
+                    </div>
+                </div>
+
+                
+
+                <div class="mt-4 mr-4 text-right font-bold text-xl" id="teljes_osszeg_container">
+                    Projekt teljes összege: <span id="teljes_osszeg">0 Ft</span>
+                </div>
+                
+                <div class="flex flex-col md:flex-row justify-center mt-12">
+                    <div class="w-full md:mr-4">
+                        <label for="szerzodes_kep" class="block text-sm font-medium text-gray-700 mb-2">Szerződés</label>
+                        <input type="file" id="szerzodes_kep" name="szerzodes_kep" accept=".doc,.docx,.pdf,image/*"
+                            class="form-szamla-input block w-full text-sm text-alapzold
+                                    file:mr-4 file:py-2 file:px-4
+                                    file:rounded-lg file:border-0
+                                    file:text-sm file:font-semibold
+                                    file:bg-alapzold file:text-white
+                                    hover:file:bg-zold-300 p-4">
+                    </div>
+                    <div class="w-full mt-6 md:mt-0">
+                        <label for="araajanlat_kep" class="block text-sm font-medium text-gray-700 mb-2">Árajánlat</label>
+                        <input type="file" id="araajanlat_kep" name="araajanlat_kep" accept=".doc,.docx,.pdf,image/*"
+                            class="form-szamla-input block w-full text-sm text-alapzold
+                                    file:mr-4 file:py-2 file:px-4
+                                    file:rounded-lg file:border-0
+                                    file:text-sm file:font-semibold
+                                    file:bg-alapzold file:text-white
+                                    hover:file:bg-zold-300 p-4">
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <button type="submit" class="w-full bg-alapzold text-white py-2 px-4 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500">Mentés</button>
+                </div>
+            </form>
+        </div>
+
+
+
+        <div class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[100]" id="projekt_folyamat_nezet">
+            <div class="bg-white md:rounded shadow-lg px-4 pt-8 md:p-8 md:w-[50%] md:h-[50%] w-full h-full grid grid-cols-1 gap-4 transition-all duration-500 relative BalrolBe" id="projekt_folyamat_nezet_container">
+                
+                <button class="text-gray-700 hover:text-gray-900 absolute top-2 right-2 z-10" id="projekt_folyamat_bezar">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+
+                <button class="text-gray-700 hover:text-gray-900 absolute top-2 left-4 z-10 hidden" id="diagram_vissza">
+                <img src="../../assets/visszanyil_icon.png" class="w-6 h-6">
+                </button>
+
+                <div class="p-0 md:p-2 md:overflow-auto md:relative example md:flex md:flex-col" id="projekt_adatok_container">
+                    <div id="projekt_adatok_lista"></div>
+                    <div class="flex justify-end">
+                    <button class="hidden bg-alapzold text-white py-2 px-4 rounded-md hover:bg-zold-300 focus:outline-none focus:ring-2 focus:ring-zold-100 focus:outline-none transition duration-200 flex items-center space-x-2" id="projekt_adatok_lista_vissza"><img src="../../assets/visszanyil_icon.png" class="w-6 h-6"></button>
+                    <button class="bg-alapzold text-white font-bold py-2 px-3 w-full rounded-md hover:bg-zold-300 focus:outline-none focus:ring-2 focus:ring-zold-100 focus:outline-none transition duration-200 flex justify-center items-center md:hidden" id="mobil_munkalapok_gomb"><img src="../../assets/edit2.png" class="w-6 h-6"><span class="pl-2 ">Munkalapok megtekintése</span></button>
+                    </div>
+                </div>
+
+                <div class="px-2 pt-4 pb-4 flex flex-col max-h-[85vh] hidden" id="munkalap_adatok_container">
+
+                    <div class="flex flex-col md:flex-row justify-between gap-4 pb-2">
+                        <div class="relative flex-1">
+                          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                          </div>
+                          <input
+                            id="munkalap_kereses_input"
+                            type="text"
+                            class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                            placeholder="Keresés..."
+                          />
+                        </div>
+                        <div class="flex space-x-2">
+                          <select id="munkalap_tipus_valasztas" class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md">
+                            <option value="0">Összes</option>
+                            <option value="inditas">Indítás alatt</option>
+                            <option value="folyamatban">Folyamatban</option>
+                            <option value="elkeszult">Elkészült</option>
+                          </select>
+                          <select id="munkalap_rendezes_valasztas" class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md">
+                            <option value="datum">Állapot szerint</option>
+                            <option value="nev">Név szerint</option>
+                         
+                          </select>
+                        </div>
+                      </div>
+
+
+                    <div class="flex justify-between items-center p-2 border-b border-gray-200 bg-alapzold flex-shrink-0">
+                        <div class="flex items-center text-xl font-medium uppercase text-white">
+                            Munkalap neve
+                        </div>
+                        <div class="flex items-center text-xl font-medium uppercase text-white">
+                            Állapot
+                        </div>
+                    </div>
+                    
+                    <div id="munkalap_adatok_lista" class="h-full overflow-y-auto flex-grow pb-8 mb-4"></div>
+                    
+                </div>
+                
+                <div class="border rounded p-2 relative cursor-pointer transition-all duration-300 hover:shadow-lg hidden diagram_container" id="projekt_teljes_osszeg_diagram_container">
+                    <h2 class="text-xl font-bold pb-2 text-center">Projekt teljesítés alakulása</h2>
+                    <div class="md:h-[calc(100%-3rem)] w-full overflow-hidden">
+                        <canvas id="projekt_teljes_osszeg_chart" class="h-full w-full"></canvas>
+                    </div>
+                </div>
+                
+                <div class="border rounded p-2 relative cursor-pointer transition-all duration-300 hover:shadow-lg hidden diagram_container" id="projekt_szoftver_diagram_container">
+                    <h2 class="text-xl font-bold pb-2 text-center">Szoftver költségek alakulása</h2>
+                    <div class="md:h-[calc(100%-3rem)] w-full overflow-hidden">
+                        <canvas id="projekt_szoftver_chart" class="h-full w-full"></canvas>
+                    </div>
+                </div>
+                
+                <div class="border rounded p-2 relative cursor-pointer transition-all duration-300 hover:shadow-lg hidden diagram_container" id="projekt_hardver_diagram_container">
+                    <h2 class="text-xl font-bold pb-2 text-center">Hardver költségek alakulása</h2>
+                    <div class="md:h-[calc(100%-3rem)] w-full overflow-hidden">
+                        <canvas id="projekt_hardver_chart" class="h-full w-full"></canvas>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+            
+        
+       
+       
+</div>

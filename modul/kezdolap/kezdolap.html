@@ -1,0 +1,288 @@
+<script src="/modul/kezdolap/server_script/kezdolap.js"></script>
+<div class="flex justify-center">
+    <div id="feladat_alert" class="hidden fixed top-24 bg-red-500 text-white text-center px-6 py-4 rounded shadow-lg transition-opacity duration-500 z-[9999]"></div>
+    <div id="osszes_munkalap_lezarasa_alert" class="hidden fixed top-24 bg-green-500 text-white text-center px-6 py-4 rounded shadow-lg transition-opacity duration-500 z-[9999]"></div>
+</div>
+
+<div class="pt-16 bg-vajszin">
+  <div id="kezdolap_nezet">
+   
+        <button id="toggleViewButton" class="fixed bottom-4 right-4 bg-blue-500 text-white p-2 rounded-lg shadow-lg z-[9999]">
+            Váltás Admin Nézetre
+        </button>
+   
+  
+  <div class="p-6" id="felhasznalo_kezdolap">
+    <h1 class="text-2xl font-bold mb-4 text-center text-zold-500">Üdv újra <?php echo $_SESSION['teljes_nev']; ?>!</h1>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div class="bg-white rounded-lg shadow p-4">
+              <h3 class="text-gray-500 text-sm">Aktív Projektek száma</h3>
+              <div class="flex items-center">
+                  <span id="aktiv_projektek_szama" class="text-2xl font-bold"></span>
+              </div>
+          </div>
+
+          <div class="bg-white rounded-lg shadow p-4">
+              <h3 class="text-gray-500 text-sm">Aktív Munkalapok száma</h3>
+              <div class="flex items-center">
+                  <span id="aktiv_munkalapok_szama" class="text-2xl font-bold"></span>
+              </div>
+          </div>
+
+          <div class="bg-white rounded-lg shadow p-4">
+              <h3 class="text-gray-500 text-sm">Ledolgozott órák</h3>
+              <div class="flex items-center">
+                  <span class="text-2xl font-bold" id="dolgozott_ora"></span>
+              </div>
+          </div>
+      </div>
+
+      
+      <div class="grid grid-cols-1">
+          
+          <div class="lg:col-span-2 mb-6">
+              <div class="bg-white rounded-lg shadow p-6">
+                  <h2 class="text-xl font-bold mb-4">Legutóbbi munkalapok</h2>
+                  <div id="legutobbi_munkalapok" class="space-y-4"></div>
+              </div>
+          </div>
+
+          
+          <div class="space-y-6">
+             
+              <div class="bg-white rounded-lg shadow p-6">
+                  <h2 class="text-xl font-bold mb-4">Projekt határidők</h2>
+                  <div id="projekt_hatarido" class="space-y-3">
+                    
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  
+  <div class="p-6 bg-vajszin hidden" id="admin_kezdolap">
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div class="bg-white rounded-lg shadow p-4">
+              <h3 class="text-gray-500 text-xl">Összes Projekt</h3>
+              <div class="flex justify-between">
+                  <span class="text-2xl font-bold" id="osszes_projekt"></span>
+                  <span class="text-2xl font-bold" ><img src="../../assets/harom_pont_icon.png" alt="projekt" class="w-8 h-8" id="osszes_projekt_info"></span>
+              </div>
+              
+          </div>
+
+          <div class="bg-white rounded-lg shadow p-4">
+              <h3 class="text-gray-500 text-xl">Aktív Munkalapok</h3>
+              <div class="flex justify-between">
+                  <span class="text-2xl font-bold" id="osszes_felhasznalo"></span>
+                  <span class="text-2xl font-bold" ><img src="../../assets/harom_pont_icon.png" alt="Aktív felhasználók" class="w-8 h-8" id="aktiv_felhasznalok_info"></span>
+              </div>
+          </div>
+
+          <div class="bg-white rounded-lg shadow p-4">
+              <h3 class="text-gray-500 text-xl">Összes Munkaóra</h3>
+              <div class="flex justify-between">
+                  <span class="text-2xl font-bold" id="osszes_munkaora"></span>
+                  
+              </div>
+          </div>
+      </div>
+
+      
+      <div class="grid grid-cols-1 gap-6">
+          <div class="lg:col-span-2 grid gap-6">
+              <div class="bg-white rounded-lg shadow p-6">
+                  <h2 class="text-xl font-bold mb-4">Felhasználói Aktivitás</h2>
+                  <div id="felhasznalo_aktivitas" class="grid grid-cols-2 md:grid-cols-8 gap-2">
+                  </div>
+
+                  <div class="mt-4">
+                    <h2 class="text-xl font-bold mb-4">Tevékenységek <span class="hidden inline-block" id="tevekenyseg_lista_gomb"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 rotate-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg></span></div></h2>
+
+                    <div id="tevekenyseg_lista" class="">
+                      
+                    </div>
+                </div>
+              </div>
+              
+          </div>
+
+         
+          <div class="space-y-6 mt-10">
+              
+              <div class="bg-white rounded-lg shadow p-6">
+                  <h2 class="text-xl font-bold mb-4">Gyors Műveletek</h2>
+                  <div class="space-y-2 flex flex-col items-center">
+                      <a href="/index.php?menu_id=2" class="w-[90%]" id="uj_projekt_gomb">
+                        <button type="button" class="w-full bg-alapzold text-white py-2 px-4 rounded hover:bg-green-500">
+                          Új projekt létrehozása
+                        </button>
+                      </a>
+
+                      <button class="w-[90%] bg-zold-500 text-white py-2 px-4 rounded hover:bg-green-700" id="jelenleti_iv_gomb">
+                          Jelenléti ív generálása
+                      </button>
+                      <button class="w-[90%] bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700" id="osszes_munkalap_lezarasa_gomb">
+                        Összes munkalap lezárása
+                    </button>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+    
+
+    <div id="aktiv_felhasznalok_info_nezet" class="hidden">
+        <div class="bg-white p-8 rounded-lg w-full mx-auto">
+            <div class="pr-5 mb-2 flex justify-between">
+                <div class="flex items-center">
+                    <img src="../../assets/visszanyil_icon.png" alt="Visszanyil" class="w-8 h-8 mr-2 hover:cursor-pointer transition-all duration-300 hover:scale-110" id="visszanyil_gomb">
+                    <h2 class="font-bold text-2xl text-left">Aktív felhasználók</h2>
+                </div>
+                <input type="text" id="search_felhasznalo" placeholder="Keresés..." class="px-4 py-2 w-48 border border-zold-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-zold-500 focus:border-zold-300 placeholder-gray-400">
+            </div>
+            <div class="w-full">
+                <div class="grid grid-cols-[50px_1fr_1fr_1fr_1fr] gap-4 bg-alapzold p-3 font-semibold">
+                    <div></div>
+                    <div class="text-white">
+                        Név
+                        <span class="felhasznalo_rendezes_gomb" data-column="teljes_nev" data-order="asc">
+                            <svg class="sort-icon h-4 w-4 inline transform origin-center" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="currentColor">
+                                <path d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128z"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="text-white">
+                        Email
+                        <span class="felhasznalo_rendezes_gomb" data-column="email" data-order="asc">
+                            <svg class="sort-icon h-4 w-4 inline transform origin-center" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="currentColor">
+                                <path d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128z"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="text-white">
+                        Telefon
+                        <span class="felhasznalo_rendezes_gomb" data-column="telefon" data-order="asc">
+                            <svg class="sort-icon h-4 w-4 inline transform origin-center" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="currentColor">
+                                <path d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128z"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="text-white">
+                        Osztály
+                        <span class="felhasznalo_rendezes_gomb" data-column="osztaly_nev" data-order="asc">
+                            <svg class="sort-icon h-4 w-4 inline transform origin-center" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="currentColor">
+                                <path d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128z"/>
+                            </svg>
+                        </span>
+                    </div>
+                
+                </div>
+                <div id="aktiv_felhasznalok_grid" class="divide-y divide-gray-200">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="osszes_projekt_info_nezet" class="hidden">
+        <div class="bg-white p-8 rounded-lg w-full mx-auto">
+            <div class="pr-5 mb-2 flex justify-between">
+                <div class="flex items-center">
+                    <img src="../../assets/visszanyil_icon.png" alt="Visszanyil" class="w-8 h-8 mr-2 hover:cursor-pointer transition-all duration-300 hover:scale-110" id="visszanyil_gomb">
+                    <h2 class=" font-bold text-2xl text-left">Összes projekt</h2>
+                </div>
+                <input type="text" id="search_box" placeholder="Keresés..." class="px-4 py-2 w-48 border border-zold-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-zold-500 focus:border-zold-300 placeholder-gray-400">
+            </div>
+            <div class="w-full">
+                <div class="grid grid-cols-[50px_50px_1fr_1fr_1fr_1fr_1fr] gap-4 bg-alapzold p-3 font-semibold">
+                    <div></div>
+                    <div class="text-white">ID
+                        <span class="rendezes_gomb" data-column="projekt_id" data-order="asc">
+                            <svg class="sort-icon h-4 w-4 inline transform origin-center" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="currentColor">
+                                <path d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128z"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="text-white">
+                        Név
+                        <span class="rendezes_gomb" data-column="projekt_nev" data-order="asc">
+                            <svg class="sort-icon h-4 w-4 inline transform origin-center" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="currentColor">
+                                <path d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128z"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="text-white">
+                        Folyamat
+                        <span class="rendezes_gomb" data-column="ossz_ora" data-order="asc">
+                            <svg class="sort-icon h-4 w-4 inline transform origin-center" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="currentColor">
+                                <path d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128z"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="text-white">
+                        Szerződött összeg
+                        <span class="rendezes_gomb" data-column="teljes_osszeg" data-order="asc">
+                            <svg class="sort-icon h-4 w-4 inline transform origin-center" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="currentColor">
+                                <path d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128z"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="text-white">
+                        Állapot
+                        <span class="rendezes_gomb" data-column="allapot_nev" data-order="asc">
+                            <svg class="sort-icon h-4 w-4 inline transform origin-center" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="currentColor">
+                                <path d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128z"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="text-white">
+                        Határidő
+                        <span class="rendezes_gomb" data-column="hatarido" data-order="asc">
+                            <svg class="sort-icon h-4 w-4 inline transform origin-center" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="currentColor">
+                                <path d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128z"/>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+                <div id="osszes_projekt_grid" class="divide-y divide-gray-200">
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="jelenleti_iv_dialog" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-[100]">
+        <div class="bg-white rounded shadow-lg p-6 md:w-[30%] w-[90%]"> 
+            <h2 class="text-xl font-bold mb-4 text-zold-300">Jelenléti ív generálása</h2>
+            <input id="jelenleti_iv_datum" type="text" placeholder="Válassz hónapot és évet" 
+                class="my-2 block w-full border border-gray-300 rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+            <div class="flex justify-end gap-4">
+                <button id="jelenleti_iv_bezaras" class="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600">
+                    Mégsem
+                </button>
+                <button id="jelenleti_iv_gomb_letoltes" class="bg-alapzold text-white py-2 px-4 rounded-md hover:bg-zold-300">
+                    Generálás
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="uj_fiok_nezet" class="hidden min-h-[500px] flex items-center justify-center">
+        <h1 class=" font-bold text-3xl text-alapzold">Nincs jogosultságod. Várd meg hogy jóváhagyják a regisztrációd.</h1></div>
+
+    </div>
+
+    </div>
+
+
+   
+    
+
+</div>
+

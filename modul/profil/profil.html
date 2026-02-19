@@ -1,0 +1,112 @@
+  <!-- Content -->
+  <script src="/modul/profil/server_script/profil.js"></script>
+
+  <div id="jelszo_modosi_dialog" class="hidden fixed inset-0 flex items-center justify-center z-50">
+    <!-- Háttér sötétítés -->
+    <div class="absolute inset-0 bg-black opacity-50"></div>
+
+    <!-- Dialógusablak -->
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative z-10">
+        <h2 class="text-xl font-bold mb-4 text-zold-500">Jelszó módosítása</h2>
+        <form id="jelszo-form">
+            <div id="form-alert" class="hidden mb-4 p-4 bg-red-100 text-red-700 border border-red-500 rounded-lg">
+                <p><strong>Hiba:</strong> Minden mezőt ki kell tölteni!</p>
+            </div>
+            <div class="mb-4">
+                <label for="regi_jelszo" class="block text-sm font-medium text-gray-700">Régi jelszó</label>
+                <input type="password" id="regi_jelszo" name="regi_jelszo"
+                    class="form-input mt-1 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+            </div>
+            <div class="mb-4">
+                <label for="uj_jelszo" class="block text-sm font-medium text-gray-700">Új jelszó</label>
+                <input type="password" id="uj_jelszo" name="uj_jelszo"
+                    class="form-input mt-1 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+            </div>
+            <div class="mb-4">
+                <label for="uj_jelszo_ujra" class="block text-sm font-medium text-gray-700">Új jelszó megerősítése</label>
+                <input type="password" id="uj_jelszo_ujra" name="uj_jelszo_ujra"
+                    class=" form-input mt-1 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+            </div>
+            <div class="flex justify-end space-x-2">
+                <button type="button" id="megse-gomb"
+                    class="bg-gray-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600">Mégse</button>
+                <button type="submit"
+                    class="bg-alapzold text-white font-bold py-2 px-4 rounded-lg hover:bg-zold-300">Mentés</button>
+            </div>
+        </form>
+     </div>
+  </div>
+  
+
+  <div id="profil_frissitve_jo" class="hidden fixed top-24 left-1/2 transform -translate-x-1/2 bg-green-400 text-white text-center px-6 py-4 rounded shadow-lg opacity-0 transition-opacity duration-500 z-[9999]">
+  </div>
+  <div id="profil_frissitve_nemjo" class="hidden fixed top-24 left-1/2 transform -translate-x-1/2 bg-red-500 text-white text-center px-6 py-4 rounded shadow-lg opacity-0 transition-opacity duration-500 z-[9999]">
+  </div>
+  <div class="mt-20 flex justify-center items-center">
+    <div class="bg-white p-4 sm:p-6 sm:mx-5 rounded-[2rem] shadow-lg w-full max-w-sm sm:max-w-md mt-10 md:mt-15 BalrolBe">
+      
+      <h2 id="profil_form_cim"
+        class="text-center text-zold-500 text-lg sm:text-xl md:text-2xl font-semibold mb-4 sm:mb-6">
+        Profil Adatok
+      </h2>
+
+      <form id="profil_form" method="POST">
+        <div class="mb-4 flex justify-center">
+          <input type="file" id="profile_picture" name="profile_picture" accept="image/*" class="hidden">
+          <div id="profile_container" class="relative w-24 h-24 cursor-pointer">
+            <img id="profile_preview" src="" alt="Profilkép" class="rounded-full w-24 h-24 object-cover border border-gray-300 transition duration-300">
+            <div id="profile_hover" class="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 transition duration-300">
+              <img src="../../assets/feher_ceruza.png" class="w-6 h-6" alt="Szerkesztés">
+            </div>
+          </div>
+        </div>
+        <!-- Felhasználónév -->
+        <div class="mb-4">
+          <label for="profil_felhasznalonev" class="block text-zold-500 mb-2 text-sm md:text-base">Felhasználónév</label>
+          <input type="text" id="profil_felhasznalonev" name="profil_felhasznalonev"
+            class="w-full border border-gray-300 rounded p-2 text-sm md:text-base" value="" required>
+        </div>
+
+        <!-- Teljes név -->
+        <div class="mb-4">
+          <label for="profil_teljesnev" class="block text-zold-500 mb-2 text-sm md:text-base">Teljes Név</label>
+          <input type="text" id="profil_teljesnev" name="profil_teljesnev"
+            class="w-full border border-gray-300 rounded p-2 text-sm md:text-base" value="" required>
+        </div>
+
+        <div class="mb-4">
+          <label for="profil_szuletesi_ido" class="block text-zold-500 mb-2 text-sm md:text-base">Születési Idő</label>
+          <input type="text" id="profil_szuletesi_ido" name="profil_szuletesi_ido"
+            class="w-full border border-gray-300 rounded p-2 text-sm md:text-base" value="" required>
+        </div>
+
+        <!-- Email -->
+        <div class="mb-4">
+          <label for="profil_email" class="block text-zold-500 mb-2 text-sm md:text-base">Email</label>
+          <input type="email" id="profil_email" name="profil_email"
+            class="w-full border border-gray-300 rounded p-2 text-sm md:text-base" value="" required>
+        </div>
+
+        <!-- Telefonszám -->
+        <div class="mb-4">
+          <label for="profil_telefonszam" class="block text-zold-500 mb-2 text-sm md:text-base">Telefonszám</label>
+          <input type="tel" id="profil_telefonszam" name="profil_telefonszam"
+            class="w-full border border-gray-300 rounded p-2 text-sm md:text-base" value="" required>
+        </div>
+      </form>
+
+      <!-- Módosítás gomb -->
+      <button id="profil_modositasa_gomb"
+        class="w-full bg-zold-500 text-white p-2 rounded hover:bg-zold-600 text-sm md:text-base mb-2">
+        Profil módosítása
+      </button>
+      <button id="profil_jelszo_modosit_gomb"
+        class="w-full bg-zold-300 text-white p-2 rounded hover:bg-zold-600 text-sm md:text-base mb-2">
+        Jelszó módosítása
+      </button>
+      <button id="profil_kijelentkez"
+        class="w-full bg-red-500 text-white p-2 rounded hover:bg-zold-600 text-sm md:text-base">
+        Kijelentkezés
+      </button>
+    </div>
+  </div>

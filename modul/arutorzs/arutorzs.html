@@ -1,0 +1,120 @@
+<script src="/modul/arutorzs/server_script/arutorzs.js"></script>
+<div id="alert_tipus_jo" class="hidden fixed top-24 left-1/2 transform -translate-x-1/2 bg-green-400 text-white text-center px-6 py-4 rounded shadow-lg opacity-0 transition-opacity duration-500 z-[9999]">
+</div>
+<div id="alert_tipus_nemjo" class="hidden fixed top-24 left-1/2 transform -translate-x-1/2 bg-red-500 text-white text-center px-6 py-4 rounded shadow-lg opacity-0 transition-opacity duration-500 z-[9999]">
+</div>
+<div class="pt-20 relative">
+    <div class="flex justify-between items-center mb-4">
+        <!-- Bal oldali gomb -->
+        <div class="pl-5 flex gap-3">
+            <button id="aru_hozzaad_gomb"
+                class="bg-alapzold text-white font-bold py-3 px-4 rounded-lg hover:bg-zold-300 focus:ring-2 focus:ring-zold-100 focus:outline-none transition duration-200 flex items-center space-x-2">
+                <img src="../../assets/edit.png" id="aru_hozzaad_kep" alt="Áru hozzáadás" title="Áru hozzáadás"
+                    class="h-6 w-6">
+                <span class="hidden md:block">Áru hozzáadása</span>
+            </button>
+            <button id="aru_tipus_hozzaad_gomb"
+                class="bg-alapzold text-white font-bold py-2 px-4 rounded-lg hover:bg-zold-300 focus:ring-2 focus:ring-zold-100 focus:outline-none transition duration-200 flex items-center space-x-2">
+                <img src="../../assets/edit2.png" id="aru_tipus_hozzaad_kep" alt="Áru típus hozzáadás" title="Áru típus hozzáadás"
+                    class="h-6 w-6">
+                <span class="hidden md:block">Áru Típus hozzáadása</span>
+            </button>
+        </div>
+
+        <!-- Jobb oldali keresőmező -->
+        <div id="search-container" class="pr-5">
+            <input type="text" id="search-box" placeholder="Keresés..."
+                class="px-4 py-2 w-48 border border-zold-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-zold-500 focus:border-zold-300 placeholder-gray-400">
+        </div>
+    </div>
+
+
+    <!-- Dialógus -->
+    <div id="aru-dialog" class="hidden fixed inset-0 flex items-center justify-center z-50">
+        <!-- Háttér sötétítés -->
+        <div class="absolute inset-0 bg-black opacity-50"></div>
+
+        <!-- Dialógusablak -->
+        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative z-10">
+            <h2 class="text-xl font-bold mb-4 text-zold-500">Áru hozzáadása</h2>
+            <form id="aru-form" enctype="multipart/form-data">
+                <div id="form-alert" class="hidden mb-4 p-4 bg-red-100 text-red-700 border border-red-500 rounded-lg">
+                    <p><strong>Hiba:</strong> Minden mezőt ki kell tölteni!</p>
+                </div>
+                <div class="mb-4">
+                    <label for="aru_megnevezes" class="block text-sm font-medium text-gray-700">Áru megnevezés</label>
+                    <input type="text" id="aru_megnevezes" name="aru_megnevezes" autocomplete="off"
+                        class="form-input mt-1 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+                </div>
+                <div class="mb-4">
+                    <label for="aru_tipus" class="block text-sm font-medium text-gray-700">Áru típus</label>
+                    <input type="text" id="aru_tipus" name="aru_tipus" autocomplete="off"
+                        class="mt-1 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+                    <ul id="autocomplete-results"
+                        class="absolute w-full bg-white border border-gray-300 shadow-md mt-1 hidden z-10"></ul>
+
+                    <input type="hidden" id="aru_tipus_id" name="aru_tipus_id">
+                </div>
+                <div class="mb-4">
+                    <label for="megjegyzes" class="block text-sm font-medium text-gray-700">Megjegyzés</label>
+                    <textarea id="megjegyzes" name="megjegyzes"
+                        class=" mt-1 h-20 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 px-3"></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="aru_kep" class="block text-sm font-medium text-gray-700 mb-2">Áru képe</label>
+                    <input type="file" id="aru_kep" name="aru_kep" accept="image/*"
+                        class="block w-full text-sm text-gray-500
+                        file:mr-4 file:py-2 file:px-4
+                        file:rounded-lg file:border-0
+                        file:text-sm file:font-semibold
+                        file:bg-green-600 file:text-white
+                        hover:file:bg-green-700">
+                    <div class="mt-2 flex justify-center">
+                        <img id="kep_elonezet" src="" alt="Előnézet" class="hidden w-32 h-32 object-cover rounded-lg shadow-md">
+                    </div>
+                    <div id="file-info" class="hidden mt-2">
+                        <img src="/assets/png_icon.png" alt="File icon" class="w-8 h-8 inline-block">
+                        <a id="file-link" href="#" target="_blank" class="text-blue-500 underline ml-2"></a>
+                        <button id="file-delete" type="button" class="text-red-500 hover:text-red-700 text-2xl font-bold ml-2">X</button>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="megse-gomb"
+                        class="bg-gray-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600">Mégse</button>
+                    <button type="button" id="torles-gomb"
+                        class="hidden bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600">Törlés</button>
+                    <button type="submit"
+                        class="bg-alapzold text-white font-bold py-2 px-4 rounded-lg hover:bg-zold-300">Mentés</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="aru-tipus-dialog" class="hidden fixed inset-0 flex items-center justify-center z-50">
+        <!-- Háttér sötétítés -->
+        <div class="absolute inset-0 bg-black opacity-50"></div>
+
+        <!-- Dialógusablak -->
+        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative z-10">
+            <h2 class="text-xl font-bold mb-4 text-zold-500">Áru Típus hozzáadása</h2>
+            <form id="aru-tipus-form">
+                <div id="form-alert-tipus" class="hidden mb-4 p-4 bg-red-100 text-red-700 border border-red-500 rounded-lg">
+                    <p><strong>Hiba:</strong> Töltsd ki a mezőt!</p>
+                </div>
+                <div class="mb-4">
+                    <label for="aru_tipus_uj" class="block text-sm font-medium text-gray-700">Áru típus</label>
+                    <input type="text" id="aru_tipus_uj" name="aru_tipus_uj"
+                        class="form-tipus-input mt-1 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="megse-gomb-tipus"
+                        class="bg-gray-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600">Mégse</button>
+                    <button type="submit"
+                        class="bg-alapzold text-white font-bold py-2 px-4 rounded-lg hover:bg-zold-300">Mentés</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="arutorzs_tabla" class="rounded-lg shadow-lg m-5"></div>
+</div>

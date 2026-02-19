@@ -1,0 +1,616 @@
+<!--
+    TrackMate AI Asszisztens modul
+    Elérési út: /var/www/html/modul/ai/ai.html
+    Beilleszkedik a meglévő TrackMate layoutba (jQuery, Tailwind, TM stílusok)
+-->
+
+<div id="ai-dashboard" class="p-4 md:p-6 max-w-[1200px] mx-auto">
+
+    <!-- Fejléc -->
+    <div class="flex items-center gap-3 mb-6">
+        <div class="bg-alapzold text-white rounded-xl w-10 h-10 flex items-center justify-center text-xl">👩‍💻</div>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Léna <span class="text-base font-normal text-gray-400">AI Asszisztens</span></h1>
+            <p class="text-sm text-gray-500">Enterpartner duális képzés mentor</p>
+        </div>
+    </div>
+
+    <!-- Tab navigáció -->
+    <div class="flex flex-wrap gap-1 mb-4 border-b border-gray-200 pb-1" id="ai-tabs">
+        <button class="ai-tab active" data-tab="reggeli">☀️ Reggeli check</button>
+        <button class="ai-tab" data-tab="napvege">🌙 Nap vége</button>
+        <button class="ai-tab" data-tab="feladat">📋 Feladat</button>
+        <button class="ai-tab" data-tab="riport">📊 Riport</button>
+        <button class="ai-tab" data-tab="hianyzas">❌ Hiányzás</button>
+        <button class="ai-tab" data-tab="bejegyzes">📝 Bejegyzések</button>
+        <button class="ai-tab" data-tab="projekt">🚀 Projektek</button>
+        <button class="ai-tab" data-tab="zaras">🔒 Lezárás</button>
+        <button class="ai-tab" data-tab="raktar">📦 Raktár</button>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 1. REGGELI CHECK -->
+    <!-- ============================================================ -->
+    <div id="tab-reggeli" class="ai-panel active">
+        <h3>Ki nem kezdett még ma?</h3>
+        <div class="ai-controls">
+            <input type="date" id="reggeli-datum" class="ai-input">
+            <select id="reggeli-osztaly" class="ai-input"><option value="">Összes osztály</option></select>
+            <button onclick="reggeliCheck()" class="ai-btn">Ellenőrzés</button>
+        </div>
+        <div id="reggeli-eredmeny" class="ai-result"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 2. NAP VÉGI ÖSSZEGZÉS -->
+    <!-- ============================================================ -->
+    <div id="tab-napvege" class="ai-panel">
+        <h3>Nap végi AI értékelés</h3>
+        <div class="ai-controls">
+            <input type="date" id="napvege-datum" class="ai-input">
+            <select id="napvege-osztaly" class="ai-input"><option value="">Összes osztály</option></select>
+            <select id="napvege-diak" class="ai-input"><option value="">Összes diák</option></select>
+            <button onclick="napVege()" class="ai-btn">AI Értékelés</button>
+        </div>
+        <div id="napvege-eredmeny" class="ai-result"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 3. FELADATJAVASLAT -->
+    <!-- ============================================================ -->
+    <div id="tab-feladat" class="ai-panel">
+        <h3>Intelligens feladatkiosztás</h3>
+        <div class="ai-controls">
+            <select id="feladat-diak" class="ai-input"><option value="">Válassz diákot...</option></select>
+            <textarea id="feladat-kontextus" rows="2" class="ai-input w-full" placeholder="Mentor megjegyzése (opcionális, pl. 'backend feladatot adjunk')"></textarea>
+            <button onclick="feladatJavaslat()" class="ai-btn">Javaslat kérése</button>
+        </div>
+        <div id="feladat-eredmeny" class="ai-result"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 4. IDŐSZAKI RIPORT -->
+    <!-- ============================================================ -->
+    <div id="tab-riport" class="ai-panel">
+        <h3>Időszaki összesítés</h3>
+        <div class="ai-controls">
+            <input type="date" id="riport-tol" class="ai-input">
+            <span class="text-gray-400">–</span>
+            <input type="date" id="riport-ig" class="ai-input">
+            <select id="riport-osztaly" class="ai-input"><option value="">Összes osztály</option></select>
+            <select id="riport-diak" class="ai-input"><option value="">Összes diák</option></select>
+            <button onclick="riport()" class="ai-btn">Riport készítése</button>
+        </div>
+        <div id="riport-eredmeny" class="ai-result"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 5. HIÁNYZÁS-FIGYELŐ -->
+    <!-- ============================================================ -->
+    <div id="tab-hianyzas" class="ai-panel">
+        <h3>Hiányzás-figyelő</h3>
+        <div class="ai-controls">
+            <label class="flex items-center gap-1 text-sm">
+                <input type="radio" name="hianyzas-mode" value="napi" checked onchange="toggleHianyzasMode()"> Napi
+            </label>
+            <label class="flex items-center gap-1 text-sm">
+                <input type="radio" name="hianyzas-mode" value="idoszak" onchange="toggleHianyzasMode()"> Időszaki
+            </label>
+            <div id="hianyzas-napi-fields">
+                <input type="date" id="hianyzas-datum" class="ai-input">
+            </div>
+            <div id="hianyzas-idoszak-fields" style="display:none" class="flex gap-2 items-center">
+                <input type="date" id="hianyzas-tol" class="ai-input">
+                <span class="text-gray-400">–</span>
+                <input type="date" id="hianyzas-ig" class="ai-input">
+            </div>
+            <select id="hianyzas-osztaly" class="ai-input"><option value="">Összes osztály</option></select>
+            <button onclick="hianyzas()" class="ai-btn">Ellenőrzés</button>
+        </div>
+        <div id="hianyzas-eredmeny" class="ai-result"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 6. BEJEGYZÉS-MINŐSÉG -->
+    <!-- ============================================================ -->
+    <div id="tab-bejegyzes" class="ai-panel">
+        <h3>Bejegyzés-minőség ellenőrzés</h3>
+        <div class="ai-controls">
+            <input type="date" id="bejegyzes-datum" class="ai-input">
+            <select id="bejegyzes-osztaly" class="ai-input"><option value="">Összes osztály</option></select>
+            <button onclick="bejegyzesMinoseg()" class="ai-btn">Ellenőrzés</button>
+        </div>
+        <div id="bejegyzes-eredmeny" class="ai-result"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 7. PROJEKT ELŐREHALADÁS -->
+    <!-- ============================================================ -->
+    <div id="tab-projekt" class="ai-panel">
+        <h3>Projekt előrehaladás elemzés</h3>
+        <div class="ai-controls">
+            <select id="projekt-select" class="ai-input"><option value="">Összes projekt</option></select>
+            <button onclick="projektElorehaladas()" class="ai-btn">Elemzés</button>
+        </div>
+        <div id="projekt-eredmeny" class="ai-result"></div>
+    </div>
+
+</div>
+
+    <!-- ============================================================ -->
+    <!-- 8. MUNKALAP AUTO-LEZÁRÁS -->
+    <!-- ============================================================ -->
+    <div id="tab-zaras" class="ai-panel">
+        <h3>Munkalap auto-lezárás</h3>
+        <p class="text-sm text-gray-500 mb-3">Nyitott vagy túlfutó munkalapok keresése. Ha valaki nem zárta le 14:00-ig, itt mesterségesen lezárhatod.</p>
+        <div class="ai-controls">
+            <input type="date" id="zaras-datum" class="ai-input">
+            <input type="time" id="zaras-ora" class="ai-input" value="14:00">
+            <button onclick="autoZarasCheck()" class="ai-btn">🔍 Keresés</button>
+            <button onclick="autoZarasExecute()" class="ai-btn" style="background:#dc2626" id="zaras-execute-btn" disabled>🔒 Lezárás végrehajtása</button>
+        </div>
+        <div id="zaras-eredmeny" class="ai-result"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 9. RAKTÁR KÉPFELISMERŐ -->
+    <!-- ============================================================ -->
+    <div id="tab-raktar" class="ai-panel">
+        <div id="raktar-felismero-container"></div>
+    </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- STÍLUSOK (TrackMate-kompatibilis) -->
+<!-- ============================================================ -->
+<style>
+/* Tabok */
+.ai-tab {
+    padding: 7px 14px;
+    border: 1px solid #d1d5db;
+    background: #f9fafb;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    font-size: 13px;
+    border-bottom: none;
+    transition: all 0.15s;
+}
+.ai-tab:hover { background: #e5e7eb; }
+.ai-tab.active {
+    background: #16a34a; /* alapzold-szerű */
+    color: white;
+    border-color: #16a34a;
+}
+
+/* Panelek */
+.ai-panel {
+    display: none;
+    padding: 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 0 0 12px 12px;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.ai-panel.active { display: block; }
+.ai-panel h3 {
+    margin: 0 0 14px 0;
+    color: #1e3a5f;
+    font-size: 16px;
+}
+
+/* Controls */
+.ai-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+.ai-input {
+    padding: 7px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    outline: none;
+    transition: border-color 0.15s;
+}
+.ai-input:focus { border-color: #16a34a; }
+
+/* Gomb - TrackMate zöld */
+.ai-btn {
+    background: #16a34a;
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+.ai-btn:hover { background: #15803d; }
+.ai-btn:disabled { background: #9ca3af; cursor: wait; }
+
+/* Eredmény doboz */
+.ai-result {
+    padding: 16px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    line-height: 1.7;
+    display: none;
+    white-space: pre-wrap;
+    max-height: 600px;
+    overflow-y: auto;
+    font-size: 14px;
+}
+.ai-result h2, .ai-result h3, .ai-result h4 {
+    color: #1e3a5f;
+    margin: 14px 0 6px;
+}
+.ai-loading { color: #6b7280; font-style: italic; }
+
+/* Kártyák */
+.ai-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    margin: 3px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+}
+.ai-badge-ok   { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+.ai-badge-warn { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+.ai-badge-info { background: #e0e7ff; color: #3730a3; border: 1px solid #a5b4fc; }
+
+/* Mobil */
+@media (max-width: 768px) {
+    .ai-controls { flex-direction: column; align-items: stretch; }
+    .ai-tab { font-size: 11px; padding: 5px 8px; }
+    #ai-tabs { gap: 2px; }
+}
+</style>
+
+<!-- ============================================================ -->
+<!-- JAVASCRIPT (jQuery-t használja, ami már be van töltve) -->
+<!-- ============================================================ -->
+<script>
+(function() {
+    'use strict';
+
+    const AI_API = '/ai-module/api.php';
+    const today  = new Date().toISOString().split('T')[0];
+    const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+                        .toISOString().split('T')[0];
+
+    // ============= INIT =============
+
+    // Dátumok kitöltése
+    $('input[type="date"]').each(function() {
+        if (!$(this).val()) $(this).val(today);
+    });
+    $('#riport-tol, #hianyzas-tol').val(monthStart);
+    $('#riport-ig, #hianyzas-ig').val(today);
+
+    // Dropdownok betöltése
+    loadDropdown('osztalyok', {}, 'select[id$="-osztaly"]', 'osztaly_id', function(o) {
+        return o.osztaly_nev + ' (' + o.osztalyTXT + ')';
+    });
+    loadDropdown('projektek', {}, '#projekt-select', 'projekt_id', function(p) {
+        return p.projekt_nev;
+    });
+    loadDropdown('diakok', {}, 'select[id$="-diak"]', 'felh_id', function(d) {
+        return d.teljes_nev + ' (' + (d.osztaly_nev || '-') + ')';
+    });
+
+    // ============= TAB KEZELÉS =============
+
+    var raktarLoaded = false;
+    $(document).on('click', '.ai-tab', function() {
+        var tab = $(this).data('tab');
+        $('.ai-tab').removeClass('active');
+        $(this).addClass('active');
+        $('.ai-panel').removeClass('active');
+        $('#tab-' + tab).addClass('active');
+
+        // Raktár tab lazy load
+        if (tab === 'raktar' && !raktarLoaded) {
+            $('#raktar-felismero-container').load('/modul/ai/raktar_felismero.html', function() {
+                raktarLoaded = true;
+            });
+        }
+    });
+
+    // Hiányzás mód toggle
+    window.toggleHianyzasMode = function() {
+        var mode = $('input[name="hianyzas-mode"]:checked').val();
+        $('#hianyzas-napi-fields').toggle(mode === 'napi');
+        $('#hianyzas-idoszak-fields').toggle(mode === 'idoszak');
+    };
+
+    // ============= DROPDOWN BETÖLTŐ =============
+
+    function loadDropdown(action, params, selector, valueKey, labelFn) {
+        $.post(AI_API, $.extend({action: action}, params), function(data) {
+            if (!data || !data.eredmeny) return;
+            var opts = '';
+            $.each(data.eredmeny, function(i, item) {
+                opts += '<option value="' + item[valueKey] + '">' + labelFn(item) + '</option>';
+            });
+            $(selector).each(function() {
+                var first = $(this).find('option:first').prop('outerHTML') || '';
+                $(this).html(first + opts);
+            });
+        }, 'json');
+    }
+
+    // ============= API HÍVÁSOK =============
+
+    // 1. Reggeli check
+    window.reggeliCheck = function() {
+        aiDataRequest('reggeli_check', {
+            datum: $('#reggeli-datum').val(),
+            osztaly_id: $('#reggeli-osztaly').val()
+        }, '#reggeli-eredmeny', function(r) {
+            if (r.nem_munkanap) return '<div class="ai-badge ai-badge-info">📅 Ez nem munkanap.</div>';
+
+            var html = '<strong>📅 ' + r.datum + '</strong><br><br>';
+
+            if (r.nem_kezdtek.length > 0) {
+                html += '<strong>⚠️ Még nem kezdtek (' + r.nem_kezdtek.length + ' fő):</strong><br>';
+                $.each(r.nem_kezdtek, function(i, d) {
+                    html += '<span class="ai-badge ai-badge-warn">❌ ' + d.teljes_nev +
+                            ' (' + (d.osztaly_nev || '-') + ')</span> ';
+                });
+                html += '<br><br>';
+            }
+
+            if (r.elkezdtek.length > 0) {
+                html += '<strong>✅ Már dolgoznak (' + r.elkezdtek.length + ' fő):</strong><br>';
+                $.each(r.elkezdtek, function(i, d) {
+                    var ml = (d.aktivitasok && d.aktivitasok[0]) ? d.aktivitasok[0].munkalap_nev : '?';
+                    html += '<span class="ai-badge ai-badge-ok">✅ ' + d.teljes_nev +
+                            ' → ' + ml + '</span> ';
+                });
+            }
+
+            if (r.nem_gyakorlati.length > 0) {
+                html += '<br><br><strong>ℹ️ Ma nem gyakorlati nap (' + r.nem_gyakorlati.length + ' fő):</strong><br>';
+                $.each(r.nem_gyakorlati, function(i, d) {
+                    html += '<span class="ai-badge ai-badge-info">' + d.teljes_nev +
+                            ' (' + (d.osztaly_nev || '-') + ')</span> ';
+                });
+            }
+
+            return html;
+        });
+    };
+
+    // 2. Nap végi összegzés
+    window.napVege = function() {
+        aiTextRequest('nap_vege', {
+            datum: $('#napvege-datum').val(),
+            felh_id: $('#napvege-diak').val(),
+            osztaly_id: $('#napvege-osztaly').val()
+        }, '#napvege-eredmeny');
+    };
+
+    // 3. Feladatjavaslat
+    window.feladatJavaslat = function() {
+        var felhId = $('#feladat-diak').val();
+        if (!felhId) { alert('Válassz diákot!'); return; }
+        aiTextRequest('feladat_javaslat', {
+            felh_id: felhId,
+            kontextus: $('#feladat-kontextus').val()
+        }, '#feladat-eredmeny');
+    };
+
+    // 4. Riport
+    window.riport = function() {
+        aiTextRequest('riport', {
+            datum_tol: $('#riport-tol').val(),
+            datum_ig: $('#riport-ig').val(),
+            osztaly_id: $('#riport-osztaly').val(),
+            felh_id: $('#riport-diak').val()
+        }, '#riport-eredmeny');
+    };
+
+    // 5. Hiányzás
+    window.hianyzas = function() {
+        var mode = $('input[name="hianyzas-mode"]:checked').val();
+
+        if (mode === 'napi') {
+            aiDataRequest('hianyzas', {
+                datum: $('#hianyzas-datum').val(),
+                osztaly_id: $('#hianyzas-osztaly').val()
+            }, '#hianyzas-eredmeny', function(r) {
+                if (!r.munkanap) return '<div class="ai-badge ai-badge-info">📅 Ez nem munkanap.</div>';
+
+                var html = '<strong>📅 ' + r.datum + '</strong><br><br>';
+                if (r.hianyzok.length > 0) {
+                    html += '<strong>❌ Hiányzók (' + r.hianyzok.length + ' fő):</strong><br>';
+                    $.each(r.hianyzok, function(i, d) {
+                        html += '<span class="ai-badge ai-badge-warn">' + d.nev + ' (' + d.osztaly + ')</span> ';
+                    });
+                    html += '<br><br>';
+                } else {
+                    html += '<div class="ai-badge ai-badge-ok">✅ Mindenki jelen van!</div><br>';
+                }
+                if (r.jelenlevok.length > 0) {
+                    html += '<strong>✅ Jelen (' + r.jelenlevok.length + ' fő):</strong><br>';
+                    $.each(r.jelenlevok, function(i, d) {
+                        html += '<span class="ai-badge ai-badge-ok">' + d.nev + ': ' + d.ossz_ora + 'h</span> ';
+                    });
+                }
+                return html;
+            });
+        } else {
+            aiTextRequest('hianyzas_riport', {
+                datum_tol: $('#hianyzas-tol').val(),
+                datum_ig: $('#hianyzas-ig').val(),
+                osztaly_id: $('#hianyzas-osztaly').val()
+            }, '#hianyzas-eredmeny');
+        }
+    };
+
+    // 6. Bejegyzés-minőség
+    window.bejegyzesMinoseg = function() {
+        aiTextRequest('bejegyzes_minoseg', {
+            datum: $('#bejegyzes-datum').val(),
+            osztaly_id: $('#bejegyzes-osztaly').val()
+        }, '#bejegyzes-eredmeny');
+    };
+
+    // 7. Projekt előrehaladás
+    window.projektElorehaladas = function() {
+        aiTextRequest('projekt_elorehaladas', {
+            projekt_id: $('#projekt-select').val()
+        }, '#projekt-eredmeny');
+    };
+
+    // 8. Auto-lezárás - keresés
+    window.autoZarasCheck = function() {
+        aiDataRequest('auto_zaras', {
+            datum: $('#zaras-datum').val(),
+            zaras_ora: $('#zaras-ora').val(),
+            auto_close: '0'
+        }, '#zaras-eredmeny', function(r) {
+            var html = '<strong>📅 ' + r.datum + ' | Záras idő: ' + r.zaras_ido + '</strong><br><br>';
+
+            // Nyitott (le nem zárt) aktivitások
+            if (r.nyitottak.length > 0) {
+                html += '<strong>⚠️ Nyitott aktivitások (' + r.nyitottak.length + ' db) — NEM ZÁRTÁK LE:</strong><br>';
+                $.each(r.nyitottak, function(i, n) {
+                    html += '<span class="ai-badge ai-badge-warn">' +
+                            '❌ ' + n.nev + ' (' + n.osztaly + ') → ' + n.munkalap +
+                            ' | Kezdés: ' + n.kezdes +
+                            ' | Jelenlegi óra: ' + n.eddigi_ora + 'h' +
+                            '</span><br>';
+                });
+                html += '<br>';
+                // Lezárás gomb engedélyezése
+                $('#zaras-execute-btn').prop('disabled', false);
+            } else {
+                html += '<div class="ai-badge ai-badge-ok">✅ Nincs nyitott aktivitás!</div><br>';
+                $('#zaras-execute-btn').prop('disabled', true);
+            }
+
+            // Túlfutó (lezárt de rossz idővel)
+            if (r.tulfutok.length > 0) {
+                html += '<br><strong>🔴 Túlfutó aktivitások (' + r.tulfutok.length + ' db) — 10+ óra:</strong><br>';
+                $.each(r.tulfutok, function(i, t) {
+                    html += '<span class="ai-badge ai-badge-warn">' +
+                            '⏰ ' + t.nev + ' (' + t.osztaly + ') → ' + t.munkalap +
+                            ' | ' + t.kezdes + ' → ' + t.zaras +
+                            ' | ' + t.valos_ora + ' óra (!)' +
+                            '</span><br>';
+                });
+            }
+
+            if (r.nyitottak.length === 0 && r.tulfutok.length === 0) {
+                html += '<div class="ai-badge ai-badge-ok">👍 Minden rendben, nincs teendő!</div>';
+            }
+
+            return html;
+        });
+    };
+
+    // 8. Auto-lezárás - végrehajtás
+    window.autoZarasExecute = function() {
+        if (!confirm('Biztosan lezárod az összes nyitott aktivitást ' +
+                     $('#zaras-ora').val() + '-ra?\n\nEz nem vonható vissza!')) return;
+
+        aiDataRequest('auto_zaras', {
+            datum: $('#zaras-datum').val(),
+            zaras_ora: $('#zaras-ora').val(),
+            auto_close: '1'
+        }, '#zaras-eredmeny', function(r) {
+            var html = '<strong>🔒 Lezárás végrehajtva: ' + r.datum + ' ' + r.zaras_ido + '</strong><br><br>';
+
+            if (r.lezartak.length > 0) {
+                html += '<strong>✅ Lezárt aktivitások (' + r.lezartak.length + ' db):</strong><br>';
+                $.each(r.lezartak, function(i, l) {
+                    var status = l.lezarva ? '✅' : '❌ HIBA';
+                    html += '<span class="ai-badge ai-badge-ok">' +
+                            status + ' ' + l.nev + ' → ' + l.munkalap +
+                            ' | ' + l.eddigi_ora + 'h → ' + l.uj_ora + 'h' +
+                            '</span><br>';
+                });
+            } else {
+                html += '<div class="ai-badge ai-badge-info">Nem volt mit lezárni.</div>';
+            }
+
+            $('#zaras-execute-btn').prop('disabled', true);
+            return html;
+        });
+    };
+
+    // ============= SEGÉDFÜGGVÉNYEK =============
+
+    /**
+     * Adat-válasz (nem AI, hanem struktúrált JSON)
+     */
+    function aiDataRequest(action, params, divId, renderFn) {
+        var $div = $(divId);
+        var $btn = $(event.target);
+        var btnText = $btn.text();
+
+        $btn.prop('disabled', true);
+        $div.show().html('<span class="ai-loading">⏳ Betöltés...</span>');
+
+        $.post(AI_API, $.extend({action: action}, params), function(data) {
+            if (data && data.status === 'ok') {
+                $div.html(renderFn(data.eredmeny));
+            } else {
+                $div.html('<span style="color:red;">Hiba: ' + (data?.hiba || 'Ismeretlen') + '</span>');
+            }
+        }, 'json').fail(function(xhr) {
+            $div.html('<span style="color:red;">Hálózati hiba: ' + xhr.statusText + '</span>');
+        }).always(function() {
+            $btn.prop('disabled', false).text(btnText);
+        });
+    }
+
+    /**
+     * AI szöveges válasz (Gemini)
+     */
+    function aiTextRequest(action, params, divId) {
+        var $div = $(divId);
+        var $btn = $(event.target);
+        var btnText = $btn.text();
+
+        $btn.prop('disabled', true).text('⏳ AI gondolkodik...');
+        $div.show().html('<span class="ai-loading">👩‍💻 Léna elemzi az adatokat, ez 10-30 mp-ig tarthat...</span>');
+
+        $.post(AI_API, $.extend({action: action}, params), function(data) {
+            if (data && data.status === 'ok') {
+                $div.html(formatMd(data.eredmeny));
+            } else {
+                $div.html('<span style="color:red;">Hiba: ' + (data?.hiba || 'Ismeretlen') + '</span>');
+            }
+        }, 'json').fail(function(xhr) {
+            $div.html('<span style="color:red;">Hálózati hiba: ' + xhr.statusText + '</span>');
+        }).always(function() {
+            $btn.prop('disabled', false).text(btnText);
+        });
+    }
+
+    /**
+     * Egyszerű Markdown → HTML
+     */
+    function formatMd(text) {
+        if (!text) return '';
+        return text
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\n/g, '<br>')
+            .replace(/#{3}\s?(.*?)(<br>)/g, '<h4>$1</h4>')
+            .replace(/#{2}\s?(.*?)(<br>)/g, '<h3>$1</h3>')
+            .replace(/#{1}\s?(.*?)(<br>)/g, '<h2>$1</h2>');
+    }
+
+})();
+</script>

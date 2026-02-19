@@ -1,0 +1,508 @@
+<script src="/modul/raktar/server_script/raktar.js"></script>
+
+<div class="pt-20 relative">
+    <div class="flex justify-between items-center mb-4">
+        <!-- Bal oldali gomb -->
+        <div class="flex space-x-4 pl-5">
+            <!-- Első gomb -->
+            <button id="aru_bevetelezes_gomb"
+                class="bg-alapzold text-white font-bold py-2 px-4 rounded-lg hover:bg-zold-300 focus:ring-2 focus:ring-zold-100 focus:outline-none transition duration-200 flex items-center space-x-2">
+                <img src="../../assets/edit.png" alt="szerkeszto_ikon" title="Szerkeszto_ikon" class="h-6 w-6">
+                <span class="hidden md:block">Áru bevételezése</span>
+            </button>
+            <!-- Második gomb -->
+            <button id="aru_kiadas_gomb"
+                class="bg-alapzold text-white font-bold py-2 px-4 rounded-lg hover:bg-zold-300 focus:ring-2 focus:ring-zold-100 focus:outline-none transition duration-200 flex items-center space-x-2">
+                <img src="../../assets/edit3.png" alt="szerkeszto_ikon" title="Szerkeszto_ikon" class="h-6 w-6">
+                <span class="hidden md:block">Áru kiadása</span>
+            </button>
+        </div>
+        <!-- Jobb oldali keresőmező -->
+        <div id="search-container" class="pr-5">
+            <input type="text" id="search-box" placeholder="Keresés..."
+                class="px-4 py-2 w-48 border border-zold-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-zold-500 focus:border-zold-300 placeholder-gray-400">
+        </div>
+    </div>
+    <div id="raktar_tabla" class="rounded-lg shadow-lg m-5"></div>
+
+
+<!--
+#############################################################################################################################
+#############################################################################################################################
+########################################    Aru bevetelezes dialog    #######################################################
+#############################################################################################################################
+#############################################################################################################################
+-->
+    <div id="aru_bevetelezes_dialog" class="hidden fixed inset-0 flex items-center justify-center z-50">
+
+        <div class="absolute inset-0 bg-black opacity-50"></div>
+
+        <div class="bg-white p-6 rounded-lg shadow-lg flex gap-6 max-w-xl w-full relative z-10 mx-4 max-h-[750px] overflow-y-auto example" id="mobil_reszponziv">
+            <div class="flex-1 w-2/3" id="mobil_step_reszponziv">
+                <div id="step1">
+                    <h2 class="text-xl font-bold mb-4 text-zold-500">Számla feltöltése</h2>
+                    <form id="szamla_kep_form">
+                        <div id="szamla_kep_form_alert"
+                            class="hidden mb-4 p-4 bg-red-100 text-red-700 border border-red-500 rounded-lg">
+                            <p><strong>Hiba:</strong> Minden mezőt ki kell tölteni!</p>
+                        </div>
+                        <input type="hidden" value="" id="bevetelezes_mod">
+                        <div class="mb-4">
+                            <label for="szamla_szam" class="block text-sm font-medium text-gray-700">Számlaszám</label>
+                            <input type="text" id="szamla_szam" name="szamla_szam"
+                                class="form-szamla-input mt-1 px-2 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300">
+                        </div>
+                        <div class="mb-4">
+                            <label for="szamla_kep" class="block text-sm font-medium text-gray-700 mb-2">Számla kép</label>
+                            <input type="file" id="szamla_kep" name="szamla_kep" accept="image/*"
+                                class="form-szamla-input block w-full text-sm text-alapzold
+                                file:mr-4 file:py-2 file:px-4
+                                file:rounded-lg file:border-0
+                                file:text-sm file:font-semibold
+                                file:bg-alapzold file:text-white
+                                hover:file:bg-zold-300 p-4">
+
+
+                            <div class="mt-2 flex justify-center">
+                                <img id="kep_elonezet" src="" alt="Előnézet"
+                                    class="hidden w-32 h-32 object-cover rounded-lg shadow-md">
+                            </div>
+                        </div>
+
+
+                        <div class="flex justify-between items-center">
+                            <div >
+                                <button type="button" id="szamla_nelkul_gomb"
+                                    class="bg-blue-300 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-500" >Feltöltés számla nélkül</button>
+                            </div>
+                            <div class="flex space-x-2">
+                            <button type="button" id="megse_gomb1"
+                                class="bg-szurke text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600">Mégse</button>
+                            <button type="button" id="tovabb_gomb"
+                                class="bg-alapzold text-white font-bold py-2 px-4 rounded-lg hover:bg-zold-300">Tovább</button>
+                            </div>
+                            
+                        </div>
+                    </form>
+
+                </div>
+
+                <div id="step2" class="hidden">
+                    <h2 class="text-xl font-bold mb-4 text-zold-500" id="step2h2">Áru bevételezése</h2>
+                    <div class="flex items-center my-3">
+                        <label for="hely_pozicio_checkbox" class="relative inline-block w-12 h-6 cursor-pointer">
+                          <!-- Rejtett checkbox, ami peer -->
+                          <input type="checkbox" id="hely_pozicio_checkbox" class="sr-only peer">
+                          <!-- A kapcsoló háttere, ami zöldre vált, ha be van pipálva -->
+                          <span class="absolute inset-0 bg-gray-300 rounded-full transition-colors duration-300 peer-checked:bg-green-500"></span>
+                          <!-- A pötty, ami elmozdul a másik oldalra a peer-checked állapotban -->
+                          <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 ease-in-out peer-checked:translate-x-6"></span>
+                        </label>
+                        <!-- A felirat, ami kattintható is -->
+                        <label for="hely_pozicio_checkbox" class="ml-3 text-gray-700 font-medium cursor-pointer">
+                          Első bevételezés
+                        </label>
+                    </div>
+                    <form id="aru_bevetelezes_form">
+                        <div id="form-alert"
+                            class="hidden mb-4 p-4 bg-red-100 text-red-700 border border-red-500 rounded-lg">
+                            <p><strong>Hiba:</strong> Minden mezőt ki kell tölteni!</p>
+                        </div>
+                        <div class="mb-4 relative">
+                            <label for="aru_megnevezes" class="block text-sm font-medium text-gray-700">Áru
+                                megnevezés*</label>
+                            <input type="text" id="aru_megnevezes" name="aru_megnevezes"
+                                class="aru_megnevezes_input form-input mt-1 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+                            <input type="hidden" class="aru_id" name="aru_id">
+                            <ul  class="autocomplete-results absolute bg-white border rounded w-full hidden z-10">
+                            </ul>
+                        </div>
+                        <div class="mb-4">
+                            <label for="darab" class="block text-sm font-medium text-gray-700">Darab*</label>
+                            <input type="text" name="darab" min="1" placeholder="0" id="darab" inputmode="numeric"
+                                class="harmas_tagolas form-input mt-1 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+                        </div>
+                        <div class="mb-4">
+                            <label for="beszerzesiAr" class="block text-sm font-medium text-gray-700">Beszerzési
+                                ár*</label>
+                            <input type="text" name="beszerzesiAr" id="beszerzesiAr" inputmode="numeric"
+                                class="harmas_tagolas form-input mt-1 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+                        </div>
+                        <div class="flex space-x-4 mb-4 hidden" id="hely_pozicio_resz">
+                            <div class="w-1/2">
+                                <label for="hely" class="block text-sm font-medium text-gray-700">Tárolás helye</label>
+                                <input type="text" name="hely" id="hely" placeholder="Szekrény"
+                                    class="mt-1 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+                            </div>
+                            <div class="w-1/2">
+                                <label for="pozicio" class="block text-sm font-medium text-gray-700">Polc/Fiók</label>
+                                <input type="text" name="pozicio" id="pozicio" placeholder="Polc/Fiók"
+                                    class="mt-1 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="megjegyzes" class="block text-sm font-medium text-gray-700">Megjegyzés</label>
+                            <textarea id="megjegyzes" name="megjegyzes"
+                                class="mt-1 h-20 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 px-3"></textarea>
+                        </div>
+
+                        <div class="mb-4 hidden" id="aru_kep_ha_kell">
+                            <label for="aru_kepe_bevetelezes" class="block text-sm font-medium text-gray-700 mb-2">Áru kép ha kell</label>
+                            <input type="file" id="aru_kepe_bevetelezes" name="aru_kepe_bevetelezes" accept="image/*"
+                                class="form-szamla-input block w-full text-sm text-alapzold
+                                file:mr-4 file:py-2 file:px-4
+                                file:rounded-lg file:border-0
+                                file:text-sm file:font-semibold
+                                file:bg-alapzold file:text-white
+                                hover:file:bg-zold-300 p-4">
+                        </div>
+
+                        
+
+                        <div class="flex justify-between items-center">
+
+                            <div>
+                                <button type="button" id="megse_gomb3"
+                                    class="bg-szurke text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600">
+                                    Mégse
+                                </button>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button type="button" id="vissza_gomb"
+                                    class="bg-blue-300 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-500">
+                                    Vissza
+                                </button>
+                                <button type="button" id="bevetelezes_gomb"
+                                    class="bg-alapzold text-white py-2 px-4 rounded-lg hover:bg-zold-300">Mentés</button>
+
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+            
+            <div id="lista_section" class="hidden md:flex-1 w-1/3 max-h-[508px] !important bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <div class="max-h-[532px]">
+                    <h2 class="text-xl font-bold mb-4 text-green-600">Bevételezett áruk</h2>
+                    <div class="flex-1 md:min-h-[85px] md:max-h-[380px] !important">
+                    <table class="table-fixed w-full border-collapse border border-gray-300 ">
+                        <thead class="bg-green-100 sticky top-0 z-10">
+                            <tr>
+                                <th class="border border-gray-300 w-48 text-center text-green-600">Áru név</th>
+                                <th class="border border-gray-300 w-16 p-2 text-center text-green-600" id="lista_section_darab">Darab</th>
+                                <th class="border border-gray-300 p-2 text-center text-green-600">Ár</th>
+                                <th class="border border-gray-300 p-2 text-center text-green-600">Hely</th>
+                                <th class="border border-gray-300 p-2 text-center text-green-600">File</th>
+                                <th class="border border-gray-300 p-2 text-center text-green-600">Törlés</th>
+                            </tr>
+                        </thead>
+                    </table>
+
+                    <div class="max-h-[350px] overflow-y-auto example">
+                        <table class="table-fixed w-full mb-4 border-collapse border border-gray-300">
+                            <tbody id="lista_tartalom" class="bg-white"></tbody>
+                        </table>
+                    </div>
+                    </table>
+                    </div>
+                </div>       
+                    <button type="submit" id="lezaras_gomb" class="mt-8 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full">
+                    Bevételezés
+                    </button>
+            </div>
+            <div id="lista_section_mobile" class="hidden md:hidden flex-1 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-green-600">Bevételezett áruk</h2>
+                <div id="lista_tartalom_mobile" class="space-y-4 overflow-y-auto example"></div>
+                <button type="submit" id="lezaras_gomb_mobile" class="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full">
+                    Bevételezés
+                </button>
+            </div>
+            
+
+        </div>
+       
+    </div>
+<!--
+#############################################################################################################################
+#############################################################################################################################
+########################################    Aru kiadas dialog    ############################################################
+#############################################################################################################################
+#############################################################################################################################
+-->
+
+    <div id="aru_kiadas_dialog" class="hidden fixed inset-0 flex items-center justify-center z-50">
+        <div class="absolute inset-0 bg-black opacity-50"></div>
+    
+        <div id="dialog_box" class="bg-white rounded-lg shadow-lg flex md:flex-row flex-col transition-all duration-300 z-10 mx-4 md:max-h-[95%] max-h-[85%] overflow-hidden w-full md:w-1/3 example">
+            <div class="p-6 flex flex-row gap-6 flex-1 overflow-y-auto">
+                <div id="kiadas_form_container" class="p-6 flex flex-col gap-6 flex-1 overflow-y-auto relative">
+                    <img id="open_right_panel" src="assets/visszanyil_icon.png" alt="Panel megnyitása"
+                    class="w-6 h-6 cursor-pointer transition absolute top-0 right-0 rotate-180 hidden"
+                    title="Panel megnyitása">
+                    <h2 class="text-2xl font-semibold text-zold-500">Áru kiadása</h2>
+                    
+                    <form id="aru_kiadas_form" class="space-y-6">
+                        <div id="form-kiadas-alert"
+                                    class="hidden mb-4 p-4 bg-red-100 text-red-700 border border-red-500 rounded-lg">
+                                    <p><strong>Hiba:</strong> Minden mezőt ki kell tölteni!</p>
+                        </div>
+                        <!-- Áru megnevezés -->
+                        <div class="mb-4 relative">
+                            <label for="aru_megnevezes_kiadas" class="block text-sm font-medium text-gray-700">Áru megnevezés</label>
+                            <input type="text" id="aru_megnevezes_kiadas" name="aru_megnevezes_kiadas" 
+                                class="form-kiadas-input aru_megnevezes_input mt-1 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+                            <input type="hidden" class="aru_id" name="aru_id">
+                            <ul  class="autocomplete-results absolute bg-white border rounded w-full hidden z-10">
+                            </ul>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="aru_kiadas_mennyiseg" class="block text-sm font-medium text-gray-700">Darab</label>
+                            <input type="text" id="aru_kiadas_mennyiseg" name="aru_kiadas_mennyiseg" inputmode="numeric"
+                            class="harmas_tagolas form-kiadas-input mt-1 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3" placeholder="0" min="1">
+                        </div>
+                        <!-- Kiadás típusa -->
+                        <div class="mb-4">
+                            <label for="aru_kiadas" class="block text-sm font-medium text-gray-700">Kiadás típusa</label>
+                            <div class="relative">
+                                <div id="aru_kiadas" class="border border-gray-300 rounded-lg p-2 text-sm text-zold-500 cursor-pointer focus:outline-none focus:ring-2 focus:ring-alapzold-500 focus:border-alapzold-500 min-w-32 flex items-center justify-between">
+                                    <span>Válassza ki a kiadás típusát!</span>
+                                    <svg class="w-4 h-4 inline-block ml-2" fill="currentColor" viewBox="0 0 20 20"><path d="M5.23 7.21a.75.75 0 011.06 0L10 10.44l3.71-3.23a.75.75 0 111.06 1.06l-4.25 3.5a.75.75 0 01-1.06 0l-4.25-3.5a.75.75 0 010-1.06z"/></svg>
+                                </div>
+                                <div id="custom_dropdown" class="hidden text-sm text-zold-500 absolute z-10 bg-white border border-gray-300 rounded-lg mt-1 w-full">
+                                    <div class="tipus_sor hover:bg-zold-300 hover:text-white cursor-pointer p-2" data-value="2">Selejt</div>
+                                    <div class="tipus_sor hover:bg-zold-300 hover:text-white cursor-pointer p-2" data-value="3">Kiadás munkalapra</div>
+                                    <div class="tipus_sor hover:bg-zold-300 hover:text-white cursor-pointer p-2" data-value="4">Visszaárú</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-4 hidden" id="munkalap_nev_div">
+                            <label for="munkalap_nev" class="block text-sm font-medium text-gray-700">Munkalap neve</label>
+                            <input type="text" id="munkalap_nev" name="munkalap_nev"
+                            class="munkalap_nev_input mt-1 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+                            <input type="hidden" id="munkalap_id" name="munkalap_id">
+                            <ul class="munkalap_ac_results left-0 w-full bg-white border rounded hidden z-[10000]"></ul>
+                        </div>
+            
+                        <div class="mb-4">
+                            <label for="megjegyzes_kiadas" class="block text-sm font-medium text-gray-700">Megjegyzés</label>
+                            <textarea id="megjegyzes_kiadas" name="megjegyzes_kiadas"
+                                class="mt-1 h-20 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 px-3"></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label for="kiadas_file" class="block text-sm font-medium text-gray-700 mb-2">Kiadás fájl</label>
+                            <input type="file" id="kiadas_file" name="kiadas_file" accept="image/*"
+                                class="block w-full text-sm text-alapzold
+                                file:mr-4 file:py-2 file:px-4
+                                file:rounded-lg file:border-0
+                                file:text-sm file:font-semibold
+                                file:bg-alapzold file:text-white
+                                hover:file:bg-zold-300 p-4">
+
+
+                            <div class="mt-2 flex justify-center">
+                                <img id="kiadas_file_elonezet" src="" alt="Előnézet"
+                                    class="hidden w-32 h-32 object-cover rounded-lg shadow-md">
+                            </div>
+                        </div>
+            
+                        <!-- További gombok (ha szükséges) -->
+                        <div class="flex md:justify-end gap-4">
+                            <button type="button" id="megse_gomb4"
+                                        class="bg-szurke text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600">Mégse</button>
+                            <button type="submit" id="aru_kiadas_submit" class="bg-alapzold text-white py-2 px-6 rounded-lg hover:bg-zold-300 ">Kiadás</button>
+                            
+                        </div>
+                    </form>
+                </div>
+                <div id="right_panel" class="hidden w-full md:w-1/2 border-t md:border-l border-gray-200 bg-gray-50 p-6 overflow-y-auto">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold text-green-600">Hozzáadott áruk</h3>
+                        <img id="close_right_panel" src="assets/visszanyil_icon.png" alt="Bezárás" class="w-6 h-6 cursor-pointer hover:scale-110 transition" title="Bezárás">
+                    </div>
+                    
+                    <div class="grid grid-cols-12 gap-2 font-medium text-gray-700 border-b border-gray-300 pb-2 mb-2">
+                        <div class="col-span-2">Áru ID</div>
+                        <div class="col-span-7">Áru név</div>
+                        <div class="col-span-3 text-right">Darab</div>
+                    </div>
+                    
+                    <div id="items_container" class="space-y-2">
+                        <!-- jQuery ide tölti be a tételeket -->
+                    </div>
+                    
+                    <div class="mt-4 pt-2 border-t border-gray-300">
+                        <div class="flex justify-between font-medium">
+                            <span>Összesen:</span>
+                            <span id="total_quantity">0 db</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    
+
+
+<!--
+#############################################################################################################################
+#############################################################################################################################
+########################################    rowClick details dialog    ######################################################
+#############################################################################################################################
+#############################################################################################################################
+-->
+   
+
+    <div id="detailsModal" class="fixed inset-0 hidden bg-black bg-opacity-50 flex justify-center items-center p-4 z-50 overflow-y-auto" >
+        <div class="bg-white p-2 rounded-lg shadow-lg md:w-3/5 max-h-screen !important overflow-y-auto example">
+            <div class="p-3 rounded-lg max-h-[90vh]" id="pc_detail">
+                <div>
+                    <div class="items-center text-center">
+                        <h2 class="text-xl font-bold mb-2 text-zold-500" id="aru_megnevezes_detail"></h2>
+                        <div class="flex items-center justify-center gap-4 mb-2">
+                            <label for="keszlet_detail" class="text-md text-zold-500 font-bold">Készlet:</label>
+                            <p class="text-md text-zold-300" id="keszlet_detail"></p>
+                            <label for="beszerzesi_ar_detail" class="text-md text-zold-500 font-bold">Beszerzési ár:</label>
+                            <p class="text-md text-zold-300" id="beszerzesi_ar_detail"></p>
+                        </div>
+                        <div class="flex items-center justify-center gap-4 mb-2">
+                            <label for="hely_detail" class="text-md text-zold-500 font-bold">Hely:</label>
+                            <div class="text-md text-zold-300 flex gap-2" id="hely_detail">
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <table class=" w-full border-separate border-spacing-y-2">
+                        <thead >
+                            <tr>
+                                <th class="w-24">&nbsp;</th>
+                                <th class="w-12 text-center font-bold text-sm">Darab</th>
+                                <th class="w-16 text-center font-bold text-sm">Beszerzési ár</th>
+                                <th class="w-40 text-center font-bold text-sm">Megjegyzés</th>
+                                <th class="w-16 text-center font-bold text-sm">Fájl</th>
+                            </tr>
+                        </thead>
+                        <tbody class="modal-body">
+                            <tr>
+                                <td colspan="5" class="text-gray-600 text-center">Betöltés...</td>
+                            </tr>
+                        
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-4 pb-4 text-right">
+                    <button class="close-btn px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Bezárás</button>
+                </div>
+            </div>
+
+
+            <div class="md:hidden max-h-[80vh] w-[80vw]">
+                <div>
+                    <div class="flex justify-between items-center mb-2" id="edit_hely_btn_mobil_div">
+                        
+                    </div>
+                    <div class="mb-2">
+                        <div class="flex gap-2 mb-2">
+                            <label for="keszlet_detail_mobil" class="text-md text-zold-500 font-bold">Készlet:</label>
+                            <p class="text-md text-zold-300" id="keszlet_detail_mobil"></p>
+                        </div>
+                        <div class="flex gap-2 mb-2">
+                            <label for="beszerzesi_ar_detail_mobil" class="text-md text-zold-500 font-bold">Beszerzési ár:</label>
+                            <p class="text-md text-zold-300" id="beszerzesi_ar_detail_mobil"></p>
+                        </div>
+                        <div class="flex gap-2 mb-2">
+                            <label for="hely_detail_mobil" class="text-md text-zold-500 font-bold">Hely:</label>
+                            <div class="text-md text-zold-300 flex gap-2" id="hely_detail_mobil"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body grid gap-4">
+                    <!-- Example of a single item structure -->
+                    <div class="bg-gray-100 p-3 rounded-lg shadow-md">
+                        <div class="font-bold text-lg">Megjegyzés</div>
+                        <div class="text-sm text-gray-600">Betöltés...</div>
+                        <div class="flex justify-between text-sm mt-2">
+                            <span class="font-semibold">Darab:</span>
+                            <span>--</span>
+                        </div>
+                        <div class="flex justify-between text-sm mt-1">
+                            <span class="font-semibold">Beszerzési ár:</span>
+                            <span>--</span>
+                        </div>
+                        <div class="flex justify-between text-sm mt-1">
+                            <span class="font-semibold">Fájl:</span>
+                            <span>--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            
+        </div>
+    </div>
+<!--
+#############################################################################################################################
+#############################################################################################################################
+########################################    hely edit dialog    #############################################################
+#############################################################################################################################
+#############################################################################################################################
+-->
+<div id="helyDialog" class="hidden fixed inset-0 flex items-center justify-center z-50">
+    <!-- Háttér -->
+    <div class="absolute inset-0 bg-black opacity-50"></div>
+  
+    <!-- Tartalom -->
+    <div class="bg-white p-6 rounded-lg shadow-lg relative z-10 mx-4 w-full md:w-2/3 max-h-[90vh] overflow-y-auto example">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold mb-4 text-zold-500" id="hely_dialog_title"></h2>
+            <img src="assets/visszanyil_icon.png" alt="Vissza" class="md:hidden w-6 h-6 cursor-pointer hover:scale-110 transition" id="vissza_gomb_mobil">
+        </div>
+
+  
+      <!-- Új hely hozzáadása form -->
+    <form id="ujHelyForm">
+      <input type="hidden" id="raktar_id" name="raktar_id">
+      <div id="ujhely_form_alert"
+            class="hidden mb-4 p-4 bg-red-100 text-red-700 border border-red-500 rounded-lg">
+            <p><strong>Hiba:</strong> Minden mezőt ki kell tölteni!</p>
+      </div>
+      <div class="mb-4 flex flex-col sm:flex-row items-start sm:items-end sm:space-x-2 space-y-2 sm:space-y-0">
+        <div>
+          <label for="tarolas_helye_input" class="block text-sm font-medium text-gray-700 mb-1">Tárolás helye</label>
+          <input type="text" id="tarolas_helye_input"
+                 class="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-green-400 w-full ujhely_input" />
+        </div>
+        <div>
+        <label for="polc_fiok_input" class="block text-sm font-medium text-gray-700 mb-1">Polc/Fiók</label>
+          <input type="text" id="polc_fiok_input"
+                 class="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-green-400 w-full ujhely_input" />
+        </div>
+        <div class="flex justify-center items-center">
+          <button id="addHelyBtn" type="button" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg mt-6 sm:mt-0">
+            +
+          </button>
+        </div>
+     </div>
+    </form>
+      <!-- Grid konténer, ide kerülnek dinamikusan a helyek -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="helyGrid">
+        <!-- A JavaScript kód fogja feltölteni -->
+      </div>
+  
+      <!-- Gomb a dialógus bezárásához -->
+      <div class="mt-4 text-right">
+        <button id="helyDialogCloseBtn" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600">
+          Bezárás
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

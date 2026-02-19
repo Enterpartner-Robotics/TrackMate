@@ -1,0 +1,69 @@
+<script src="/modul/partnertorzs/server_script/partnertorzs.js"></script>
+<div class="pt-20 relative">
+    <div class="flex justify-between items-center mb-4">
+        <!-- Bal oldali gomb -->
+        <div class="pl-5">
+            <button id="partner_hozzaad_gomb"
+                class="bg-alapzold text-white font-bold py-2 px-4 rounded-lg hover:bg-zold-300 focus:ring-2 focus:ring-zold-100 focus:outline-none transition duration-200 flex items-center space-x-2">
+                <img src="../../assets/edit.png" id="profilgomb" alt="Profil adatok" title="Profil adatok"
+                    class="h-6 w-6">
+                <span class="hidden md:block">Partner felvétel</span>
+            </button>
+        </div>
+
+        <!-- Jobb oldali keresőmező -->
+        <div id="search-container" class="pr-5">
+            <input type="text" id="search-box" placeholder="Keresés..."
+                class="px-4 py-2 w-48 border border-zold-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-zold-500 focus:border-zold-300 placeholder-gray-400">
+        </div>
+    </div>
+
+
+    <!-- Dialógus -->
+    <div id="partner-dialog" class="hidden fixed inset-0 flex items-center justify-center z-50">
+        <!-- Háttér sötétítés -->
+        <div class="absolute inset-0 bg-black opacity-50"></div>
+
+        <!-- Dialógusablak -->
+        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative z-10">
+            <h2 class="text-xl font-bold mb-4 text-zold-500">Partner Felvétele</h2>
+            <form id="partner-form">
+                <div id="form-alert" class="hidden mb-4 p-4 bg-red-100 text-red-700 border border-red-500 rounded-lg">
+                    <p><strong>Hiba:</strong> Minden mezőt ki kell tölteni!</p>
+                </div>
+                <div class="mb-4">
+                    <label for="ceg-nev" class="block text-sm font-medium text-gray-700">Cég név*</label>
+                    <input type="text" id="ceg-nev" name="ceg-nev"
+                        class="form-input mt-1 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+                </div>
+                <div class="mb-4">
+                    <label for="szekhely" class="block text-sm font-medium text-gray-700">Székhely*</label>
+                    <input type="text" id="szekhely" name="szekhely"
+                        class="form-input mt-1 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+                </div>
+                <div class="mb-4">
+                    <label for="telefonszam" class="block text-sm font-medium text-gray-700">Telefonszám*</label>
+                    <input type="text" id="telefonszam" name="telefonszam"
+                        class="form-input mt-1 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+                </div>
+                <div class="mb-4">
+                    <label for="adoszam" class="block text-sm font-medium text-gray-700">Adószám*</label>
+                    <input type="text" id="adoszam" name="adoszam" placeholder="00000000-0-00"
+                        pattern="\d{8}-\d{1}-\d{2}"
+                        class="form-input mt-1 block w-full border border-szurke rounded-lg shadow-sm focus:outline-zold-300 focus:border-zold-300 h-9 px-3">
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="megse-gomb"
+                        class="bg-gray-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600">Mégse</button>
+                    <button type="button" id="torles-gomb"
+                        class="hidden bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600">Törlés</button>
+                    <button type="submit"
+                        class="bg-alapzold text-white font-bold py-2 px-4 rounded-lg hover:bg-zold-300">Mentés</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="partnertorzs_tabla" class="rounded-lg shadow-lg m-5"></div>
+</div>

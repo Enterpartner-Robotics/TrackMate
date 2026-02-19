@@ -1,0 +1,90 @@
+<script src="/modul/regisztracio/server_script/register.js"></script>
+<section class="justify-center flex min-h-screen">
+  <div
+    class="bg-white p-4 sm:p-6 sm:mx-5 rounded-[2rem] shadow-lg w-full max-w-sm sm:max-w-md items-center justify-center  float-center BalrolBe">
+    <p class="flex justify-center mb-4 sm:mb-6">
+      <img src="../../assets/logo/trackmate_zold_szeles.png" alt="Trackmate logó" title="Trackmate logó"
+        id="regisztracio_logo" class="max-w-full h-auto">
+    </p>
+
+    <h2 id="regisztracio_form_cim"
+      class="text-center text-fekete text-lg sm:text-xl md:text-2xl font-semibold mb-4 sm:mb-6">
+      Regisztráció
+    </h2>
+
+    <div id="sikeres_regisztracio" class="bg-green-100 text-green-700 p-4 rounded mb-4" style="display: none;">
+      <strong>Sikeres regisztráció!</strong>
+      <span>5 másodperc múlva átirányítjuk a bejelentkezési oldalra...</span>
+    </div>
+
+    <div id="hibas_regisztracio" class="bg-red-100 text-red-700 p-4 rounded mb-4" style="display: none;">
+      <strong>Hiba!</strong>
+      <span id="hibauzenet"></span>
+    </div>
+
+    <form id="regisztracio_form" method="POST">
+
+      <div class="mb-4 flex justify-center">
+        <input type="file" id="profile_picture" name="profile_picture" accept="image/*" class="hidden">
+        <div id="profile_container" class="relative w-24 h-24 cursor-pointer">
+          <img id="profile_preview" src="../../assets/profil_icon.png" alt="Profilkép" class="rounded-full w-24 h-24 object-cover border border-gray-300 transition duration-300">
+          <div id="profile_hover" class="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 transition duration-300">
+            <img src="../../assets/feher_ceruza.png" class="w-6 h-6" alt="Szerkesztés">
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label for="regisztracio_felhasznalonev"
+          class="block text-fekete mb-2 text-sm md:text-base">Felhasználónév</label>
+        <input type="text" id="regisztracio_felhasznalonev" name="regisztracio_felhasznalonev"
+          class="szukseges_input w-full border border-gray-300 rounded p-2 text-sm md:text-base">
+      </div>
+
+      <div class="mb-4">
+        <label for="regisztracio_teljesnev" class="block text-fekete mb-2 text-sm md:text-base">Teljes Név</label>
+        <input type="text" id="regisztracio_teljesnev" name="regisztracio_teljesnev"
+          class="szukseges_input w-full border border-gray-300 rounded p-2 text-sm md:text-base">
+      </div>
+
+      <div class="mb-4">
+        <label for="regisztracio_szuletesi_ido" class="block text-fekete mb-2 text-sm md:text-base">Születési Idő</label>
+        <input type="text" id="regisztracio_szuletesi_ido" name="regisztracio_szuletesi_ido"
+          class="szukseges_input w-full border border-gray-300 rounded p-2 text-sm md:text-base" placeholder="E-KRÉTA miatt szükséges!">
+      </div>
+
+      <div class="mb-4">
+        <label for="regisztracio_email" class="block text-fekete mb-2 text-sm md:text-base">Email</label>
+        <input type="email" id="regisztracio_email" name="regisztracio_email"
+          class="szukseges_input w-full border border-gray-300 rounded p-2 text-sm md:text-base">
+      </div>
+      <div class="mb-4">
+        <label for="regisztracio_telefonszam" class="block text-fekete mb-2 text-sm md:text-base">Telefonszám</label>
+        <input type="tel" id="regisztracio_telefonszam" name="regisztracio_telefonszam"
+          class="szukseges_input w-full border border-gray-300 rounded p-2 text-sm md:text-base">
+      </div>
+
+      <div class="mb-4">
+        <label for="regisztracio_jelszo" class="block text-fekete mb-2 text-sm md:text-base">Jelszó</label>
+        <input type="password" id="regisztracio_jelszo" name="regisztracio_jelszo"
+          class="szukseges_input w-full border border-gray-300 rounded p-2 text-sm md:text-base">
+      </div>
+
+      <div class="mb-6">
+        <label for="regisztracio_jelszo_megerosites" class="block text-fekete mb-2 text-sm md:text-base">Jelszó
+          megerősítése</label>
+        <input type="password" id="regisztracio_jelszo_megerosites" name="regisztracio_jelszo_megerosites"
+          class="szukseges_input w-full border border-gray-300 rounded p-2 text-sm md:text-base">
+      </div>
+
+      <button type="submit" id="regisztracio_gomb"
+        class="w-full bg-zold-500 text-white p-2 rounded hover:bg-kek-600 text-sm md:text-base">
+        Regisztráció
+      </button>
+    </form>
+
+    <p class="text-center mt-4 text-sm md:text-base">Már van fiókod?
+      <a href="javascript:void(0);" id="bejelentkezes_link" class="text-alapzold hover:underline">Bejelentkezés</a>
+    </p>
+  </div>
+</section>

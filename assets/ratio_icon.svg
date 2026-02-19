@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" class="transition-transform hover:scale-110 group">
+  <mask id="mask0" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="2" y="3" width="21" height="19">
+    <path fill-rule="evenodd" clip-rule="evenodd"
+      d="M23 3H2V22H23V3ZM6.5 7C5.94772 7 5.5 7.44772 5.5 8V12C5.5 12.5523 5.94772 13 6.5 13C7.05228 13 7.5 12.5523 7.5 12V9H10.5C11.0523 9 11.5 8.55228 11.5 8C11.5 7.44772 11.0523 7 10.5 7H6.5ZM18.5 17C19.0523 17 19.5 16.5523 19.5 16V12C19.5 11.4477 19.0523 11 18.5 11C17.9477 11 17.5 11.4477 17.5 12V15H14.5C13.9477 15 13.5 15.4477 13.5 16C13.5 16.5523 13.9477 17 14.5 17H18.5Z"
+      fill="currentColor" />
+  </mask>
+  <g mask="url(#mask0)">
+    <path d="M21.75 18.25V5.75C21.75 5.19772 21.3023 4.75 20.75 4.75H4.25C3.69772 4.75 3.25 5.19772 3.25 5.75V18.25C3.25 18.8023 3.69772 19.25 4.25 19.25H20.75C21.3023 19.25 21.75 18.8023 21.75 18.25Z"
+      class="fill-gray-800 stroke-gray-800 group-hover:fill-white group-hover:stroke-white" stroke-width="1.5"
+      stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+</svg>

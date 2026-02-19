@@ -1,0 +1,30 @@
+regiszt validáció css ✅
+login altert ✅
+cookie settings/consent gomb ( MAJD!!!!! )
+https ( MAJD!!!!! )
+profil kép ✅
+cookie nem ment a bezár chorme ✅
+változok neve átnézése az összes kódban  ( MAJD!!!!! )
+profil kép testreszabható legyen  ( MAJD!!!!! )
+fotó tipusnál ✅
+fotó számla raktárnál ✅
+arú helye raktárnál ✅
+visszáru ✅
+Emailezés  ( MAJD!!!!! )
+Aru bevetelezes dialog css -> legyen arányos ✅
+HÁRMAS TAGOLÁS A SZÁMOKRA ✅
+Validáció minden formon Föleg a raktárnál ✅
+Tabulator LIMIT beállitása ✅
+Kétlépcsős azonositás ( MAJD!!!!! )
+oldal újratöltése helyett https + service worker ( MAJD!!!!! )
+
+Megcsinálni egy olyan nézetet ahol az inditott projekt adatait összehasonlitjuk a projekt valóságos adataival és statisztika ✅
+munkalap csatolás MUNKALAPOK MODUL ÉS RAKTÁR MODUL✅
+tabulator magyarositas✅
+grafikonok ✅
+ujrainditas jog csak az adminnak munkalapoknál✅
+belső keresés munkalap szűrőknél✅
+Projekt Indítás teljes átnézés minden
+Projektjeim legyen reszponzív
+Csak Összes projekt legyen a projektek modulba és ott a listanézet legyen tabulatoros
+RESZPONZIV MINDEN projekt, kezdolap
