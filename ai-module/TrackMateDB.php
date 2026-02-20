@@ -4,7 +4,7 @@
  * Pontosan a TM_db sémára szabva
  */
 
-require_once __DIR__ . '/config.php';
+require_once __DIR__ . '../server_ini/config.php';
 
 class TrackMateDB
 {

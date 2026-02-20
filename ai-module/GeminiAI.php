@@ -3,7 +3,7 @@
  * Gemini API kommunikáció - szöveg + kép támogatás
  */
 
-require_once __DIR__ . '/config.php';
+require_once __DIR__ . '../server_ini/config.php';
 
 class GeminiAI
 {

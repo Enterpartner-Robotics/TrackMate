@@ -1,20 +1,18 @@
 <?php
+include_once('/var/www/html/server_ini/config.php');
+
 @session_start();
 $cdate = date("Y-m-d", time());
 $ctime = date("H:i:s", time());
 $cdatetime = date("Y-m-d H:i:s", time());
 
-
-define('LOCAL_SERVER_ADDRESS', 'SERVER_ADDRESS_HERE');
-define('NODE_SERVER_URL', 'http://'.LOCAL_SERVER_ADDRESS.':8081/new-data');
-
 function escapeInput($input){
-	$gaSql['user']     = 'DB';
-	$gaSql['password'] = 'DATABASE_PW';
-	$gaSql['db']       = 'TM_db';
-	$gaSql['server']   = 'SERVER_ADDRESS';
-	$gaSql['port']     = 3306; 
-	$gaSql['charset']  = 'utf8';
+	$gaSql['user']     = DB_USER;
+	$gaSql['password'] = DB_PASS;
+	$gaSql['db']       = DB_NAME;
+	$gaSql['server']   = DB_HOST;
+	$gaSql['port']     = DB_PORT; 
+	$gaSql['charset']  = DB_CHARSET;
 
 	$link = mysqli_connect($gaSql['server'], $gaSql['user'], $gaSql['password'], $gaSql['db'],$gaSql['port'] );
 	if (mysqli_connect_error()) {
@@ -33,12 +31,12 @@ function kerdes($Query)
 
     $cdatetime = date("Y-m-d H:i:s", time());
 	
-    $gaSql['user']     = 'DB';
-	$gaSql['password'] = 'DATABASE_PW';
-	$gaSql['db']       = 'TM_db';
-	$gaSql['server']   = 'SERVER_ADDRESS';
-    $gaSql['port']     = 3306;
-    $gaSql['charset']  = 'utf8';
+	$gaSql['user']     = DB_USER;
+	$gaSql['password'] = DB_PASS;
+	$gaSql['db']       = DB_NAME;
+	$gaSql['server']   = DB_HOST;
+	$gaSql['port']     = DB_PORT; 
+	$gaSql['charset']  = DB_CHARSET;
 
     $link = mysqli_connect($gaSql['server'], $gaSql['user'], $gaSql['password'], $gaSql['db'], $gaSql['port']);
     if (mysqli_connect_error()) {
