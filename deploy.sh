@@ -1,17 +1,22 @@
 #!/bin/bash
 
-# =====================================
-# CONFIGURATION
-# =====================================
 GIT_REPO_URL="https://github.com/Enterpartner-Robotics/TrackMate.git"
-WEBHOOK_URL="https://discord.com/api/webhooks/your_webhook_id"
 DEPLOY_DIR="/var/www/html"
 LOG_FILE="$DEPLOY_DIR/deploy.log"
 BRANCH="main"
 
-# =====================================
-# FUNCTIONS
-# =====================================
+ENV_FILE="$DEPLOY_DIR/.env"
+if [ -f "$ENV_FILE" ]; then
+    export $(grep -v '^#' "$ENV_FILE" | xargs)
+else
+    echo "ERROR: .env file not found in $DEPLOY_DIR" | tee -a "$LOG_FILE"
+    exit 1
+fi
+
+if [ -z "$WEBHOOK_URL" ]; then
+    echo "ERROR: WEBHOOK_URL not set in .env" | tee -a "$LOG_FILE"
+    exit 1
+fi
 
 log() {
     local message="$1"
@@ -33,16 +38,11 @@ error_exit() {
     exit 1
 }
 
-# =====================================
-# START DEPLOYMENT
-# =====================================
-
 START_TIME=$(date +%s)
 log "================ Starting deployment ================="
 
 cd "$DEPLOY_DIR" || error_exit "Failed to cd to $DEPLOY_DIR"
 
-# Fetch latest commits
 log "Fetching latest commits from remote..."
 git fetch origin || error_exit "git fetch failed"
 
@@ -53,23 +53,21 @@ log "Local commit: $LOCAL_COMMIT"
 log "Remote commit: $REMOTE_COMMIT"
 
 if [ "$LOCAL_COMMIT" != "$REMOTE_COMMIT" ]; then
-    # clickable GitHub link
+    LOCAL_COMMIT_LINK="[$LOCAL_COMMIT]($GIT_REPO_URL/commit/$LOCAL_COMMIT)"
     COMMIT_LINK="[$REMOTE_COMMIT]($GIT_REPO_URL/commit/$REMOTE_COMMIT)"
     log "New update detected! Starting deployment..."
-    send_discord "🚀 New update detected! Starting deployment...\nRemote commit: $COMMIT_LINK"
+    send_discord "New update detected! Starting deployment...\nLocal commit: $LOCAL_COMMIT_LINK\nRemote commit: $COMMIT_LINK"
 
-    # Pull changes
     git pull origin $BRANCH || error_exit "git pull failed"
 
-    # Restart Apache
     log "Restarting Apache..."
     systemctl restart apache2 || error_exit "Failed to restart Apache"
 
     END_TIME=$(date +%s)
     DURATION=$((END_TIME - START_TIME))
 
-    log "Deployment finished successfully in ${DURATION}s"
-    send_discord "✅ Deployment finished successfully in ${DURATION}s\nRemote commit: $COMMIT_LINK"
+    log "Deployment finished successfully in `${DURATION}s`"
+    send_discord "✅ Deployment finished successfully in `${DURATION}s`\nRemote commit: $COMMIT_LINK"
 else
     log "No updates detected. Deployment skipped."
 fi
